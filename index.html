@@ -10,688 +10,480 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
-        }
-        .chart-container {
-            position: relative;
-            height: 300px;
-            max-height: 40vh;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .tab-button.active {
-            border-color: #0e7490;
-            background-color: #0e7490;
-            color: white;
-        }
-        .section-hidden, .page-hidden {
-            display: none !important;
-        }
-        .modal-screen, #product-choice-screen {
-            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-        }
-        #app-content-wrapper {
-            transition: opacity 0.5s ease-in-out;
-        }
-        .choice-button {
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-        }
-        .choice-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .bank-logo-text {
-            font-weight: 700;
-            color: #0891b2; /* Tailwind cyan-600 */
-            font-size: 1.75rem; /* text-2xl */
-            line-height: 2.25rem; /* leading-9 */
-        }
-        .bank-logo-subtext {
-            font-size: 0.75rem; /* text-xs */
-            color: #4b5563; /* Tailwind gray-600 */
-            display: block;
-            line-height: 1;
-            margin-top: -2px;
-        }
-        .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: #0e7490;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 9999px; /* rounded-full */
-            font-size: 1.5rem; /* text-2xl for arrow size */
-            line-height: 1;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 60; /* Ensure it's above content but below modals */
-        }
-         .back-button:hover {
-            background-color: #087287;
-        }
-
+        body { font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
+        .chart-container { position: relative; height: 300px; max-height: 40vh; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .page-hidden { display: none !important; }
+        .modal-screen { transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
+        #app-content-wrapper { transition: opacity 0.5s ease-in-out; }
+        .choice-button { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
+        .choice-button:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .bank-logo-text { font-weight: 700; color: #0891b2; font-size: 1.75rem; line-height: 2.25rem; }
+        .back-to-choice-section-button { background-color: #0e7490; color: white; padding: 0.625rem 1.5rem; border-radius: 0.375rem; font-weight: 600; }
+        .back-to-choice-section-button:hover { background-color: #087287; }
+        .input-style { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.375rem; }
+        .input-style:focus { outline: none; box-shadow: 0 0 0 2px #06B6D4; border-color: #06B6D4; }
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800">
 
     <div id="login-modal" class="modal-screen fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[100]">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm mx-4 sm:max-w-md">
-            <div class="flex justify-center mb-6">
-                <div class="bank-logo-text">بنك قناة السويس</div>
-            </div>
+            <div class="flex justify-center mb-6"><div class="bank-logo-text">بنك قناة السويس</div></div>
             <h2 class="text-2xl font-bold text-center text-cyan-700 mb-6">تسجيل الدخول</h2>
             <form id="login-form">
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">اسم المستخدم</label>
-                    <input type="text" id="username" name="username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-400" placeholder="ادخل اسم المستخدم" required>
-                </div>
-                <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
-                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-400" placeholder="ادخل كلمة المرور" required>
-                </div>
+                <div class="mb-4"><label for="username" class="block text-sm font-medium text-gray-700 mb-1">اسم المستخدم</label><input type="text" id="username" class="input-style" placeholder="ادخل اسم المستخدم" required></div>
+                <div class="mb-6"><label for="password" class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label><input type="password" id="password" class="input-style" placeholder="ادخل كلمة المرور" required></div>
                 <div id="login-error" class="text-red-600 text-sm mb-4 text-center font-semibold" style="display: none;"></div>
-                <button type="submit" class="w-full bg-cyan-700 text-white py-2.5 px-4 rounded-md hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-opacity-75 transition duration-200 ease-in-out font-semibold">
-                    دخـــول
-                </button>
+                <button type="submit" class="w-full bg-cyan-700 text-white py-2.5 px-4 rounded-md hover:bg-cyan-800 font-semibold">دخـــول</button>
             </form>
+        </div>
+    </div>
+
+    <div id="welcome-message-modal" class="modal-screen fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[110]" style="display: none; opacity: 0; visibility: hidden;">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm mx-4 text-center">
+            <h2 id="welcome-text" class="text-2xl font-bold text-cyan-700 mb-4"></h2><p class="text-gray-600">جارٍ تحضير حسابك...</p>
         </div>
     </div>
 
     <div id="product-choice-screen" class="modal-screen fixed inset-0 bg-slate-100 flex items-center justify-center z-[90]" style="display: none; opacity: 0; visibility: hidden;">
         <div class="bg-white p-8 sm:p-12 rounded-xl shadow-2xl w-full max-w-lg mx-4 text-center">
-            <div class="flex justify-center mb-8">
-                <div class="bank-logo-text">بنك قناة السويس</div>
-            </div>
+            <div class="flex justify-center mb-8"><div class="bank-logo-text">بنك قناة السويس</div></div>
             <h2 class="text-3xl font-bold text-cyan-800 mb-8">اختر الخدمة المطلوبة</h2>
-            <p class="text-gray-600 mb-10 text-lg">مرحباً بك <span id="welcome-username" class="font-semibold text-cyan-700"></span>! يرجى اختيار نوع المنتج الذي ترغب في استكشافه.</p>
+            <p class="text-gray-600 mb-10 text-lg">مرحباً بك <span id="welcome-username" class="font-semibold text-cyan-700"></span>! يرجى اختيار نوع المنتج.</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <button data-choice="certificates" class="choice-button bg-cyan-600 text-white py-8 px-4 rounded-lg shadow-md hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-75">
-                    <span class="text-5xl block mb-3">📄</span>
-                    <span class="text-xl font-semibold">الشهادات</span>
-                </button>
-                <button data-choice="loans" class="choice-button bg-orange-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75">
-                    <span class="text-5xl block mb-3">💰</span>
-                    <span class="text-xl font-semibold">القروض</span>
-                </button>
-                <button data-choice="deposits" class="choice-button bg-teal-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-opacity-75">
-                     <span class="text-5xl block mb-3">🏦</span>
-                    <span class="text-xl font-semibold">الودائع</span>
-                </button>
+                <button data-choice="certificates" class="choice-button bg-cyan-600 text-white py-8 px-4 rounded-lg shadow-md hover:bg-cyan-700"><span class="text-5xl block mb-3">📄</span><span class="text-xl font-semibold">الشهادات</span></button>
+                <button data-choice="loans" class="choice-button bg-orange-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-orange-600"><span class="text-5xl block mb-3">💰</span><span class="text-xl font-semibold">القروض</span></button>
+                <button data-choice="deposits" class="choice-button bg-teal-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-teal-600"><span class="text-5xl block mb-3">🏦</span><span class="text-xl font-semibold">الودائع</span></button>
             </div>
-             <button id="logout-button-choice" class="mt-10 text-sm text-gray-500 hover:text-cyan-700 underline">تسجيل الخروج</button>
+            <button id="logout-button-choice" class="mt-10 text-sm text-gray-500 hover:text-cyan-700 underline">تسجيل الخروج</button>
         </div>
     </div>
 
     <div id="app-content-wrapper" class="page-hidden" style="opacity: 0;">
-        <button id="back-to-choice-button" title="العودة لاختيار الخدمة" class="back-button page-hidden">
-            <span>&#x279C;</span> </button>
         <header class="bg-white shadow-md sticky top-0 z-50">
-            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center">
-                        <a href="#" id="header-logo-link" class="bank-logo-text">بنك قناة السويس</a>
-                    </div>
-                    <div class="hidden md:block">
-                        <div id="main-nav-links" class="ml-10 flex items-baseline space-x-4 space-x-reverse">
-                            <a href="#hero" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 rounded-md text-sm font-medium">الرئيسية</a>
-                            <a href="#products" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 rounded-md text-sm font-medium">المنتجات</a>
-                            <a href="#calculator" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 rounded-md text-sm font-medium">الحاسبة</a>
-                            <a href="#contact" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 rounded-md text-sm font-medium">تواصل معنا</a>
-                            <button id="logout-button-header" class="text-gray-600 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium">تسجيل الخروج</button>
-                        </div>
-                    </div>
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-cyan-700 focus:outline-none">
-                            <span class="sr-only">فتح القائمة الرئيسية</span>
-                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </nav>
-            <div id="mobile-menu" class="md:hidden hidden">
-                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                    <a href="#hero" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">الرئيسية</a>
-                    <a href="#products" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">المنتجات</a>
-                    <a href="#calculator" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">الحاسبة</a>
-                    <a href="#contact" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">تواصل معنا</a>
-                    <button id="logout-button-mobile" class="w-full text-left text-gray-600 hover:bg-red-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium">تسجيل الخروج</button>
-                </div>
-            </div>
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8"><div class="flex items-center justify-between h-16">
+                <div class="flex items-center"><a href="#" id="header-logo-link" class="bank-logo-text">بنك قناة السويس</a></div>
+                <div class="hidden md:block"><div id="main-nav-links" class="ml-10 flex items-baseline space-x-4 space-x-reverse">
+                    <a href="#hero" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 text-sm font-medium">الرئيسية</a>
+                    <a href="#calculator" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 text-sm font-medium">الحاسبة</a>
+                    <a href="#contact" class="nav-link text-gray-600 hover:text-cyan-700 px-3 py-2 text-sm font-medium">تواصل معنا</a>
+                    <button id="logout-button-header" class="text-gray-600 hover:text-red-600 px-3 py-2 text-sm font-medium">تسجيل الخروج</button>
+                </div></div>
+                <div class="md:hidden"><button id="mobile-menu-button" class="p-2 text-gray-400 hover:text-white hover:bg-cyan-700 rounded-md"><span class="sr-only">القائمة</span><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg></button></div>
+            </div></nav>
+            <div id="mobile-menu" class="md:hidden hidden"><div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#hero" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 text-base font-medium">الرئيسية</a>
+                <a href="#calculator" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 text-base font-medium">الحاسبة</a>
+                <a href="#contact" class="nav-link text-gray-600 hover:bg-cyan-700 hover:text-white block px-3 py-2 text-base font-medium">تواصل معنا</a>
+                <button id="logout-button-mobile" class="w-full text-left text-gray-600 hover:bg-red-600 hover:text-white block px-3 py-2 text-base font-medium">تسجيل الخروج</button>
+            </div></div>
         </header>
 
         <main>
-            <section id="hero" class="page-section bg-cyan-800 text-white pt-20 pb-24">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 id="hero-title" class="text-4xl md:text-5xl font-bold leading-tight mb-4">استثمر مستقبلك بثقة</h1>
-                    <p id="hero-subtitle" class="text-lg md:text-xl text-cyan-200 max-w-3xl mx-auto mb-8">نظرة شاملة على أبرز منتجاتنا المصرفية.</p>
-                    <a href="#products" class="bg-white text-cyan-800 font-bold py-3 px-8 rounded-full hover:bg-cyan-100 transition duration-300">اكتشف المنتجات</a>
-                </div>
-            </section>
-
-            <section id="products" class="page-section py-16 sm:py-20">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-12">
-                        <h2 id="products-title" class="text-3xl md:text-4xl font-bold text-gray-900">منتجاتنا المصرفية</h2>
-                        <p id="products-subtitle" class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">(البيانات المعروضة هي أمثلة وقد تختلف عن الأسعار الفعلية بالبنك)</p>
-                    </div>
-                    <div id="products-grid-container">
-                        <div id="certificates-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 product-grid-content page-hidden"></div>
-                        <div id="deposits-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 product-grid-content page-hidden"></div>
-                        <div id="loans-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 product-grid-content page-hidden"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="calculator" class="page-section py-16 sm:py-20 bg-gray-100">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-12">
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900">الحاسبة التفاعلية</h2>
-                        <p id="calculator-subtitle" class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">(الأرقام المستخدمة في الحاسبة هي أمثلة توضيحية)</p>
-                    </div>
-                    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-start">
-                        <div id="certificate-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden">
-                            <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة أرباح الشهادات</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="cert-amount" class="block text-sm font-medium text-gray-700">مبلغ الاستثمار (ج.م)</label>
-                                    <input type="number" id="cert-amount" value="10000" min="1000" step="1000" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-                                </div>
-                                <div>
-                                    <label for="cert-rate" class="block text-sm font-medium text-gray-700">سعر العائد السنوي (%)</label>
-                                    <input type="number" id="cert-rate" value="20" min="1" max="30" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-                                </div>
-                                 <div>
-                                    <label for="cert-years" class="block text-sm font-medium text-gray-700">مدة الشهادة (سنوات)</label>
-                                    <input type="number" id="cert-years" value="3" min="1" max="10" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-                                </div>
-                            </div>
-                            <div class="mt-6">
-                                <div class="chart-container">
-                                    <canvas id="earningsChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="loan-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden">
-                            <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة أقساط القروض</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="loan-amount" class="block text-sm font-medium text-gray-700">مبلغ القرض (ج.م)</label>
-                                    <input type="number" id="loan-amount" value="50000" min="5000" step="1000" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-                                </div>
-                                <div>
-                                    <label for="loan-years" class="block text-sm font-medium text-gray-700">فترة السداد (سنوات)</label>
-                                    <input type="number" id="loan-years" value="5" min="1" max="15" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-                                </div>
-                                 <div>
-                                    <label for="loan-rate" class="block text-sm font-medium text-gray-700">سعر الفائدة السنوي (%)</label>
-                                    <input type="number" id="loan-rate" value="22.5" min="5" max="35" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-                                </div>
-                            </div>
-                             <div class="mt-6 text-center">
-                                <p class="text-gray-600">القسط الشهري المقدر:</p>
-                                <p id="monthly-payment" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p>
-                            </div>
-                            <div class="mt-4">
-                                 <div class="chart-container" style="height:250px;">
-                                    <canvas id="loanChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                         <div id="deposit-calculator-placeholder" class="bg-white p-6 rounded-lg shadow-lg page-hidden text-center text-gray-500">
-                            <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة الودائع</h3>
-                            <p>سيتم إضافة حاسبة تفاعلية للودائع قريباً.</p>
-                            <span class="text-6xl mt-4 block">⏱️</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <section id="hero" class="page-section bg-cyan-800 text-white pt-20 pb-24"><div class="container mx-auto px-4 text-center">
+                <h1 id="hero-title" class="text-4xl md:text-5xl font-bold mb-4">استثمر مستقبلك بثقة</h1>
+                <p id="hero-subtitle" class="text-lg md:text-xl text-cyan-200 max-w-3xl mx-auto mb-8">نظرة شاملة على أبرز منتجاتنا المصرفية.</p>
+                <a href="#calculator" class="bg-white text-cyan-800 font-bold py-3 px-8 rounded-full hover:bg-cyan-100">استكشف الحاسبات</a>
+            </div></section>
             
-            <section id="contact" class="page-section bg-cyan-800 text-white">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                    <div class="text-center mb-10">
-                        <h2 class="text-3xl md:text-4xl font-bold">جاهز لتبدأ رحلتك المالية؟</h2>
-                        <p class="mt-4 text-lg text-cyan-200 max-w-2xl mx-auto">تواصل معنا اليوم أو قم بزيارة أقرب فرع. فريقنا مستعد لمساعدتك في اختيار المنتج الأنسب لك.</p>
-                    </div>
-                    <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 text-center">
-                        <div class="bg-cyan-700/50 p-6 rounded-lg">
-                            <h3 class="text-xl font-bold mb-2">تفضل بزيارتنا</h3>
-                            <p class="text-cyan-200">ابحث عن أقرب فرع من شبكة فروعنا الواسعة في جميع أنحاء الجمهورية.</p>
-                        </div>
-                        <div class="bg-cyan-700/50 p-6 rounded-lg">
-                            <h3 class="text-xl font-bold mb-2">اتصل بنا</h3>
-                            <p class="text-cyan-200">تحدث مباشرة مع خدمة العملاء على الخط الساخن: <span class="font-bold tracking-wider">19093</span> (مثال)</p>
-                        </div>
-                        <div class="bg-cyan-700/50 p-6 rounded-lg">
-                            <h3 class="text-xl font-bold mb-2">تابعنا أونلاين</h3>
-                            <p class="text-cyan-200">اكتشف المزيد عبر موقعنا الإلكتروني وتطبيقاتنا المصرفية الرقمية.</p>
-                        </div>
-                    </div>
+            <section id="products" class="page-section py-16 sm:py-20 page-hidden"> </section>
+
+            <section id="calculator" class="page-section py-16 sm:py-20 bg-gray-100"><div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 id="calculator-section-title" class="text-3xl md:text-4xl font-bold text-gray-900">الحاسبة التفاعلية</h2>
+                    <p id="calculator-subtitle" class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">(الأرقام هي أمثلة توضيحية)</p>
                 </div>
-            </section>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-start">
+                    <div id="certificate-total-earnings-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden">
+                        <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة إجمالي أرباح الشهادات</h3>
+                        <div class="space-y-4">
+                            <div><label for="cert-total-amount" class="block text-sm font-medium">مبلغ الاستثمار (ج.م)</label><input type="number" id="cert-total-amount" value="10000" min="1000" class="input-style mt-1"></div>
+                            <div><label for="cert-total-rate" class="block text-sm font-medium">سعر العائد السنوي (%)</label><input type="number" id="cert-total-rate" value="20" min="1" step="0.1" class="input-style mt-1"></div>
+                            <div><label for="cert-total-years" class="block text-sm font-medium">مدة الشهادة (سنوات)</label><input type="number" id="cert-total-years" value="3" min="1" class="input-style mt-1"></div>
+                        </div>
+                        <div class="mt-6"><div class="chart-container"><canvas id="certificateTotalEarningsChart"></canvas></div></div>
+                    </div>
+                    <div id="certificate-periodic-payout-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden">
+                        <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة العائد الدوري للشهادات</h3>
+                        <div class="space-y-4">
+                            <div><label for="cert-select-type" class="block text-sm font-medium">اختر الشهادة</label><select id="cert-select-type" class="input-style mt-1"><option value="triple_fixed">شهادة الادخار الثلاثية (عائد ثابت)</option><option value="alhosad">شهادة الحصاد</option><option value="dollar_3yr">شهادة دولارية (3 سنوات)</option><option value="dollar_5yr">شهادة دولارية (5 سنوات)</option></select></div>
+                            <div id="cert-rate-options-wrapper" class="space-y-1" style="display: none;"><label for="cert-select-rate-option" class="block text-sm font-medium">اختر نوع العائد</label><select id="cert-select-rate-option" class="input-style mt-1"></select></div>
+                            <div class="mt-2"><p class="text-sm text-gray-500">الفائدة السنوية المطبقة: <span id="payout-calc-display-rate" class="font-semibold text-cyan-700">0.00</span>%</p></div>
+                            <div><label for="payout-calc-amount" id="payout-calc-amount-label" class="block text-sm font-medium">مبلغ الشهادة</label><input type="number" id="payout-calc-amount" value="10000" min="100" class="input-style mt-1"></div>
+                            <div><label for="payout-calc-frequency" class="block text-sm font-medium">دورية صرف العائد (للحساب)</label><select id="payout-calc-frequency" class="input-style mt-1"><option value="daily">يومي</option><option value="monthly" selected>شهري</option><option value="quarterly">ربع سنوي</option><option value="semi-annually">نصف سنوي</option><option value="annually">سنوي</option></select></div>
+                        </div>
+                        <div class="mt-6 text-center"><p id="periodic-payout-description" class="text-gray-600">العائد الشهري المقدر:</p><p id="periodic-payout-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p></div>
+                    </div>
+                    <div id="certs-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
+
+                    <div id="revamped-loan-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden md:col-span-2">
+                        <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة أقساط القروض</h3>
+                        <div class="grid md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <label for="loan-select-type" class="block text-sm font-medium text-gray-700">نوع القرض</label>
+                                <select id="loan-select-type" class="input-style mt-1"></select>
+                            </div>
+                            <div>
+                                <label for="loan-manual-rate" class="block text-sm font-medium text-gray-700">نسبة الفائدة السنوية (%)</label>
+                                <input type="number" id="loan-manual-rate" value="15" min="1" max="100" step="0.1" class="input-style mt-1">
+                            </div>
+                            <div>
+                                <label for="loan-custom-amount" class="block text-sm font-medium text-gray-700">قيمة القرض (بالجنيه المصري)</label>
+                                <input type="number" id="loan-custom-amount" value="50000" min="1000" step="1000" class="input-style mt-1">
+                            </div>
+                            <div>
+                                <label for="loan-custom-term-years" class="block text-sm font-medium text-gray-700">فترة السداد (سنوات)</label>
+                                <input type="number" id="loan-custom-term-years" value="5" min="1" max="30" step="1" class="input-style mt-1">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="loan-repayment-frequency" class="block text-sm font-medium text-gray-700">دورية استحقاق القسط</label>
+                                <select id="loan-repayment-frequency" class="input-style mt-1">
+                                    <option value="monthly" selected>شهرياً</option>
+                                    <option value="quarterly">ربع سنوياً</option>
+                                    <option value="semi-annually">نصف سنوياً</option>
+                                    <option value="annually">سنوياً</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p id="loan-custom-installment-description" class="text-gray-600">القسط الشهري المقدر:</p>
+                            <p id="loan-custom-installment-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p>
+                        </div>
+                    </div>
+                    <div id="loans-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
+                    
+                    <div id="term-deposit-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden md:col-span-2">
+                        <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة عائد الودائع لأجل</h3>
+                        <div class="grid md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div><label for="dep-select-currency" class="block text-sm font-medium">عملة الوديعة</label><select id="dep-select-currency" class="input-style mt-1"><option value="EGP" selected>جنيه مصري</option><option value="USD">دولار أمريكي</option><option value="GBP">جنيه استرليني</option><option value="EUR">يورو</option></select></div>
+                            <div><label for="dep-select-term" class="block text-sm font-medium">مدة الوديعة</label><select id="dep-select-term" class="input-style mt-1"><option value="1W">أسبوع</option><option value="1M" selected>شهر</option><option value="2M">شهران</option><option value="3M">ثلاثة أشهر</option><option value="6M">ستة أشهر</option><option value="1Y">سنة</option></select></div>
+                            <div class="md:col-span-2"><label for="dep-calc-amount" id="dep-calc-amount-label" class="block text-sm font-medium">مبلغ الوديعة (بالجنيه المصري)</label><input type="number" id="dep-calc-amount" value="10000" min="100" class="input-style mt-1"></div>
+                        </div>
+                        <div class="mt-4"><p class="text-sm text-gray-500">سعر الفائدة السنوي المطبق: <span id="dep-display-rate" class="font-semibold text-cyan-700">0.00</span>%</p></div>
+                        <div class="mt-6 text-center">
+                            <p id="dep-interest-earned-description" class="text-gray-600">إجمالي العائد للوديعة بنهاية المدة:</p>
+                            <p id="dep-interest-earned-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p>
+                        </div>
+                    </div>
+                    <div id="deposits-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
+                </div>
+            </div></section>
+            
+            <section id="contact" class="page-section bg-cyan-800 text-white"><div class="container mx-auto px-4 py-16"><div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold">جاهز لتبدأ؟</h2><p class="mt-4 text-lg text-cyan-200 max-w-2xl mx-auto">تواصل معنا أو قم بزيارة أقرب فرع.</p></div><div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-cyan-700/50 p-6 rounded-lg"><h3 class="text-xl font-bold mb-2">تفضل بزيارتنا</h3><p class="text-cyan-200"><a href="https://scbank.com.eg/Ar/Locator.aspx" target="_blank" class="hover:underline">ابحث عن أقرب فرع</a>.</p></div>
+                <div class="bg-cyan-700/50 p-6 rounded-lg"><h3 class="text-xl font-bold mb-2">اتصل بنا</h3><p class="text-cyan-200">الخط الساخن: <span class="font-bold tracking-wider">19093</span></p></div>
+                <div class="bg-cyan-700/50 p-6 rounded-lg"><h3 class="text-xl font-bold mb-2">تابعنا أونلاين</h3><p class="text-cyan-200"><a href="https://scbank.com.eg/Ar/" target="_blank" class="hover:underline">موقعنا وتطبيقاتنا</a>.</p></div>
+            </div></div></section>
         </main>
         
-        <footer class="bg-gray-900 text-white">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
-                <p>&copy; <span id="current-year"></span> بنك قناة السويس. جميع الحقوق محفوظة.</p>
-                <p class="text-sm text-gray-400 mt-2">هذا عرض توضيحي تفاعلي. البيانات المعروضة هي أمثلة وقد تختلف عن الأسعار والشروط الفعلية. للحصول على معلومات دقيقة ومحدثة، يرجى الرجوع إلى الموقع الرسمي للبنك أو التواصل مع خدمة العملاء.</p>
-            </div>
-        </footer>
+        <footer class="bg-gray-900 text-white"><div class="container mx-auto px-4 py-6 text-center"><p>&copy; <span id="current-year"></span> بنك قناة السويس. كل الحقوق محفوظة.</p><p class="text-sm text-gray-400 mt-2">عرض توضيحي. البيانات أمثلة وقد تختلف.</p></div></footer>
     </div>
 
 <script>
+// JavaScript code remains identical to the version provided in the previous turn
+// where the login modal was the simple centered one and all calculators were functional.
+// The key is that the HTML for the login modal in this response
+// is reverted to the simpler design, and the CSS for background effects
+// like '.professional-login-bg' and its pseudo-elements are removed or not applied.
 document.addEventListener('DOMContentLoaded', function () {
+    // --- Element Selectors (original selectors for login modal) ---
     const loginModal = document.getElementById('login-modal');
     const loginForm = document.getElementById('login-form');
     const loginError = document.getElementById('login-error');
+    const usernameInput = document.getElementById('username'); // For original login modal
+    const passwordInput = document.getElementById('password'); // For original login modal
+
     const productChoiceScreen = document.getElementById('product-choice-screen');
     const appContentWrapper = document.getElementById('app-content-wrapper');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
     const welcomeUsernameSpan = document.getElementById('welcome-username');
-    const backToChoiceButton = document.getElementById('back-to-choice-button');
     const headerLogoLink = document.getElementById('header-logo-link');
-
+    const welcomeMessageModal = document.getElementById('welcome-message-modal');
+    const welcomeText = document.getElementById('welcome-text');
     const allPageSections = document.querySelectorAll('.page-section');
-    const allProductGridContents = document.querySelectorAll('.product-grid-content');
-    const certificateCalculatorWrapper = document.getElementById('certificate-calculator-wrapper');
-    const loanCalculatorWrapper = document.getElementById('loan-calculator-wrapper');
-    const depositCalculatorPlaceholder = document.getElementById('deposit-calculator-placeholder');
-    
-    const heroTitle = document.getElementById('hero-title');
-    const heroSubtitle = document.getElementById('hero-subtitle');
-    const productsTitle = document.getElementById('products-title');
-    const productsSubtitle = document.getElementById('products-subtitle');
-    const calculatorSubtitle = document.getElementById('calculator-subtitle');
+    const productsSection = document.getElementById('products');
+    const calculatorSectionTitle = document.getElementById('calculator-section-title');
 
-    const serviceSpecificText = {
-        certificates: {
-            heroTitle: "شهادات بنك قناة السويس",
-            heroSubtitle: "استثمر بأمان وحقق عوائد تنافسية مع باقة شهاداتنا المتنوعة.",
-            productsTitle: "أنواع الشهادات الادخارية",
-            productsSubtitle: "اختر الشهادة التي تناسب أهدافك الاستثمارية.",
-            calculatorSubtitle: "احسب أرباح شهادتك الادخارية المتوقعة."
-        },
-        loans: {
-            heroTitle: "قروض بنك قناة السويس",
-            heroSubtitle: "حقق طموحاتك مع حلولنا التمويلية المرنة والميسرة.",
-            productsTitle: "برامج القروض المتاحة",
-            productsSubtitle: "اكتشف برنامج القرض الذي يلبي احتياجاتك المالية.",
-            calculatorSubtitle: "احسب القسط الشهري لقرضك بسهولة."
-        },
-        deposits: {
-            heroTitle: "ودائع بنك قناة السويس",
-            heroSubtitle: "ادخر أموالك بمرونة وأمان مع حسابات الودائع المتنوعة.",
-            productsTitle: "أنواع الودائع وحسابات التوفير",
-            productsSubtitle: "اختر الوعاء الادخاري الأنسب لك.",
-            calculatorSubtitle: "نعمل على توفير حاسبة تفاعلية للودائع قريباً."
-        }
+    // Certificate Calculator Elements
+    const certificateTotalEarningsWrapper = document.getElementById('certificate-total-earnings-wrapper');
+    const certificatePeriodicPayoutWrapper = document.getElementById('certificate-periodic-payout-wrapper');
+    const certsBackButtonContainer = document.getElementById('certs-back-button-container');
+    const certTotalAmountEl = document.getElementById('cert-total-amount');
+    const certTotalRateEl = document.getElementById('cert-total-rate');
+    const certTotalYearsEl = document.getElementById('cert-total-years');
+    const certSelectTypeEl = document.getElementById('cert-select-type');
+    const certRateOptionsWrapperEl = document.getElementById('cert-rate-options-wrapper');
+    const certSelectRateOptionEl = document.getElementById('cert-select-rate-option');
+    const payoutCalcDisplayRateEl = document.getElementById('payout-calc-display-rate');
+    const payoutCalcAmountEl = document.getElementById('payout-calc-amount');
+    const payoutCalcAmountLabelEl = document.getElementById('payout-calc-amount-label');
+    const payoutCalcFrequencyEl = document.getElementById('payout-calc-frequency');
+    const periodicPayoutDescriptionEl = document.getElementById('periodic-payout-description');
+    const periodicPayoutResultEl = document.getElementById('periodic-payout-result');
+    
+    // Revamped Loan Calculator Elements
+    const revampedLoanCalculatorWrapper = document.getElementById('revamped-loan-calculator-wrapper');
+    const loansBackButtonContainer = document.getElementById('loans-back-button-container');
+    const loanSelectTypeEl = document.getElementById('loan-select-type');
+    const loanManualRateEl = document.getElementById('loan-manual-rate');
+    const loanCustomAmountEl = document.getElementById('loan-custom-amount');
+    const loanCustomTermYearsEl = document.getElementById('loan-custom-term-years');
+    const loanRepaymentFrequencyEl = document.getElementById('loan-repayment-frequency');
+    const loanCustomInstallmentDescEl = document.getElementById('loan-custom-installment-description');
+    const loanCustomInstallmentResultEl = document.getElementById('loan-custom-installment-result');
+
+    // Deposit Calculator Elements (New Revamped)
+    const termDepositCalculatorWrapper = document.getElementById('term-deposit-calculator-wrapper');
+    const depositsBackButtonContainer = document.getElementById('deposits-back-button-container');
+    const depSelectCurrencyEl = document.getElementById('dep-select-currency');
+    const depSelectTermEl = document.getElementById('dep-select-term');
+    const depCalcAmountEl = document.getElementById('dep-calc-amount');
+    const depCalcAmountLabelEl = document.getElementById('dep-calc-amount-label');
+    const depDisplayRateEl = document.getElementById('dep-display-rate');
+    const depInterestEarnedDescEl = document.getElementById('dep-interest-earned-description');
+    const depInterestEarnedResultEl = document.getElementById('dep-interest-earned-result');
+
+    let currentCertificateAnnualRate = 0;
+    let certificateTotalEarningsChart;
+
+    // --- Data Definitions ---
+    const certificateDefinitions = { 
+        triple_fixed: { name: "شهادة الادخار الثلاثية (عائد ثابت)", options: [{ text: "عائد ثابت 19.5%", annualRate: 19.5, currency: "EGP" }] },
+        alhosad: { name: "شهادة الحصاد", options: [{ text: "عائد يومي 23.25% (سنوي مكافئ)", annualRate: 23.25, currency: "EGP" }, { text: "عائد سنوي 23.75%", annualRate: 23.75, currency: "EGP" }] },
+        dollar_3yr: { name: "شهادة دولارية (3 سنوات)", options: [{ text: "عائد شهري 5.15% (سنوي مكافئ)", annualRate: 5.15, currency: "USD" }, { text: "عائد سنوي 5.30%", annualRate: 5.30, currency: "USD" }] },
+        dollar_5yr: { name: "شهادة دولارية (5 سنوات)", options: [{ text: "عائد شهري 5.00% (سنوي مكافئ)", annualRate: 5.00, currency: "USD" }, { text: "عائد سنوي 5.15%", annualRate: 5.15, currency: "USD" }] }
     };
+    const loanTypes = [ "التمويل الشخصي", "قرض بضمان الراتب", "قرض بضمان تحويل الراتب أو القسط", "قرض للأفراد بدون تحويل الراتب/ القسط", "قرض لموظفي البنوك", "قرض لضباط الجيش والمتقاعدين", "قرض لضباط الشرطة والمتقاعدين", "قرض لأصحاب الأنشطة والمهن الحرة", "قرض لأصحاب المعاشات", "القرض التعليمي", "تمويل عضوية نادي سماش الرياضي", "تمويل عضوية الأندية الرياضية", "قرض الأطباء", "قرض بضمان تملك عقار", "قرض بضمان بطاقة ائتمانية", "قرض بضمان السجل الائتماني(I-Score)", "قرض بضمان أوعية ادخارية", "قرض بضمان جزئي", "منتج التمويل العقاري", "التمويل العقاري لمحدودي الدخل", "التمويل العقاري لمتوسطي الدخل 3 %", "التمويل العقاري لمتوسطي الدخل 8 %", "مبادرة البنك المركزي لإحلال المركبات (Go Green)", "تمويل الطاقة النظيفة والمُتجددة", "قرض السيارة" ];
+    const depositInterestRates = { 
+        "EGP": [ { minAmount: 10000, maxAmount: Infinity, rates: { "1W": 7.75 } }, { minAmount: 2000, maxAmount: Infinity, rates: { "1M": 11.25, "2M": 0.00, "3M": 11.75, "6M": 12.25, "1Y": 12.75 } } ],
+        "USD": [ { minAmount: 100, maxAmount: 49999, rates: { "1W": 2.99, "1M": 3.02178, "2M": 2.97178, "3M": 2.48037, "6M": 2.33353, "1Y": 1.56408 } }, { minAmount: 50000, maxAmount: 149999, rates: { "1W": 3.04, "1M": 3.07178, "2M": 3.02178, "3M": 2.53037, "6M": 2.38353, "1Y": 1.61408 } }, { minAmount: 150000, maxAmount: 299999, rates: { "1W": 3.09, "1M": 3.12178, "2M": 3.07178, "3M": 2.58037, "6M": 2.43353, "1Y": 1.66408 } }, { minAmount: 300000, maxAmount: 499999, rates: { "1W": 3.14, "1M": 3.17178, "2M": 3.12178, "3M": 2.63037, "6M": 2.48353, "1Y": 1.71408 } }, { minAmount: 500000, maxAmount: Infinity, rates: { "1W": 3.19, "1M": 3.22178, "2M": 3.17178, "3M": 2.68037, "6M": 2.53353, "1Y": 1.76408 } } ],
+        "GBP": [ { minAmount: 100, maxAmount: Infinity, rates: { "1W": 0.001, "1M": 0.001, "2M": 0.001, "3M": 0.001, "6M": 0.001, "1Y": 0.001 } } ],
+        "EUR": [ { minAmount: 100, maxAmount: Infinity, rates: { "1W": 0.001, "1M": 0.001, "2M": 0.001, "3M": 0.001, "6M": 0.001, "1Y": 0.001 } } ]
+    };
+    const termDurationsInYears = { "1W": 1/52, "1M": 1/12, "2M": 2/12, "3M": 3/12, "6M": 6/12, "1Y": 1 };
+    const currencySymbols = { EGP: "جنيه", USD: "دولار", GBP: "استرليني", EUR: "يورو" };
 
     function resetAppContent() {
-        allPageSections.forEach(s => s.classList.add('page-hidden'));
-        allProductGridContents.forEach(pg => pg.classList.add('page-hidden'));
-        certificateCalculatorWrapper.classList.add('page-hidden');
-        loanCalculatorWrapper.classList.add('page-hidden');
-        depositCalculatorPlaceholder.classList.add('page-hidden');
-        backToChoiceButton.classList.add('page-hidden');
+        allPageSections.forEach(s => s.classList.add('page-hidden')); 
+        if (productsSection) productsSection.classList.add('page-hidden');
+        const allCalculatorsAndButtons = [
+            certificateTotalEarningsWrapper, certificatePeriodicPayoutWrapper, certsBackButtonContainer,
+            revampedLoanCalculatorWrapper, loansBackButtonContainer, 
+            termDepositCalculatorWrapper, depositsBackButtonContainer
+        ];
+        allCalculatorsAndButtons.forEach(el => { if(el) el.classList.add('page-hidden'); });
     }
-
-    function showProductChoiceScreen() {
+    function showProductChoiceScreen() { 
         resetAppContent();
-        appContentWrapper.style.opacity = '0';
-        appContentWrapper.classList.add('page-hidden');
+        if(appContentWrapper) { appContentWrapper.style.opacity = '0'; appContentWrapper.classList.add('page-hidden'); }
         setTimeout(() => {
-            appContentWrapper.style.display = 'none';
-            productChoiceScreen.style.display = 'flex';
-            setTimeout(() => {
-                productChoiceScreen.style.opacity = '1';
-                productChoiceScreen.style.visibility = 'visible';
-            }, 50);
+            if(appContentWrapper) appContentWrapper.style.display = 'none';
+            if(productChoiceScreen) { productChoiceScreen.style.display = 'flex'; setTimeout(() => { productChoiceScreen.style.opacity = '1'; productChoiceScreen.style.visibility = 'visible'; }, 50); }
         }, 300);
     }
+    if(headerLogoLink) headerLogoLink.addEventListener('click', (e) => { e.preventDefault(); showProductChoiceScreen(); });
     
-    if(headerLogoLink) {
-        headerLogoLink.addEventListener('click', function(e){
-            e.preventDefault();
-            showProductChoiceScreen();
-        });
-    }
-
-
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const username = usernameInput.value.trim();
-        const password = passwordInput.value.trim();
-
-        if (username === "مصطفي" && password === "كاستلو") {
-            loginModal.style.opacity = '0';
-            loginModal.style.visibility = 'hidden';
+    loginForm.addEventListener('submit', function(event) { 
+        event.preventDefault(); 
+        const enteredUsername = usernameInput.value.trim(); 
+        const enteredPassword = passwordInput.value.trim(); 
+        if (enteredUsername === "مصطفي" && enteredPassword === "كاستلو") {
+            loginModal.style.opacity = '0'; loginModal.style.visibility = 'hidden';
             setTimeout(() => {
                 loginModal.style.display = 'none';
-                if (welcomeUsernameSpan) welcomeUsernameSpan.textContent = username;
-                showProductChoiceScreen();
+                if(welcomeText) welcomeText.textContent = `أهلاً بك، ${enteredUsername}!`; 
+                if(welcomeUsernameSpan) welcomeUsernameSpan.textContent = enteredUsername;
+                if(welcomeMessageModal) { welcomeMessageModal.style.display = 'flex'; setTimeout(() => { welcomeMessageModal.style.opacity = '1'; welcomeMessageModal.style.visibility = 'visible'; }, 50); }
+                setTimeout(() => {
+                    if(welcomeMessageModal) { welcomeMessageModal.style.opacity = '0'; welcomeMessageModal.style.visibility = 'hidden'; setTimeout(() => { welcomeMessageModal.style.display = 'none'; showProductChoiceScreen(); }, 300); }
+                    else { showProductChoiceScreen(); }
+                }, 3000); 
             }, 300); 
-        } else {
-            loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة. الرجاء المحاولة مرة أخرى.';
-            loginError.style.display = 'block';
-            passwordInput.value = ''; 
-            usernameInput.focus();
+        } else { 
+            loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.'; 
+            loginError.style.display = 'block'; 
+            if(passwordInput) passwordInput.value = ''; 
+            if(usernameInput) usernameInput.focus(); 
         }
     });
-    
-    const logoutButtons = document.querySelectorAll('#logout-button-choice, #logout-button-header, #logout-button-mobile');
-    logoutButtons.forEach(btn => {
+    document.querySelectorAll('#logout-button-choice, #logout-button-header, #logout-button-mobile').forEach(btn => { 
         btn.addEventListener('click', function() {
-            usernameInput.value = '';
-            passwordInput.value = '';
-            loginError.style.display = 'none';
-            
-            appContentWrapper.style.opacity = '0';
-            productChoiceScreen.style.opacity = '0';
-            productChoiceScreen.style.visibility = 'hidden';
-
+            if(usernameInput) usernameInput.value = ''; 
+            if(passwordInput) passwordInput.value = ''; 
+            if(loginError) loginError.style.display = 'none';
+            if(appContentWrapper) appContentWrapper.style.opacity = '0'; if(productChoiceScreen) { productChoiceScreen.style.opacity = '0'; productChoiceScreen.style.visibility = 'hidden';}
             setTimeout(() => {
-                appContentWrapper.style.display = 'none';
-                appContentWrapper.classList.add('page-hidden');
-                productChoiceScreen.style.display = 'none';
-                
-                loginModal.style.display = 'flex';
-                setTimeout(() => {
-                    loginModal.style.opacity = '1';
-                    loginModal.style.visibility = 'visible';
-                    usernameInput.focus();
-                }, 50);
+                if(appContentWrapper) { appContentWrapper.style.display = 'none'; appContentWrapper.classList.add('page-hidden');}
+                if(productChoiceScreen) productChoiceScreen.style.display = 'none';
+                if(loginModal) { 
+                    loginModal.style.display = 'flex'; 
+                    setTimeout(() => { loginModal.style.opacity = '1'; loginModal.style.visibility = 'visible'; if(usernameInput) usernameInput.focus(); }, 50);
+                }
             }, 300);
         });
     });
-
-
-    const choiceButtons = document.querySelectorAll('.choice-button');
-    choiceButtons.forEach(button => {
+    document.querySelectorAll('.choice-button').forEach(button => { 
         button.addEventListener('click', function() {
-            const choice = this.dataset.choice;
-            productChoiceScreen.style.opacity = '0';
-            productChoiceScreen.style.visibility = 'hidden';
+            const choice = this.dataset.choice; if(productChoiceScreen) { productChoiceScreen.style.opacity = '0'; productChoiceScreen.style.visibility = 'hidden';}
             setTimeout(() => {
-                productChoiceScreen.style.display = 'none';
-                appContentWrapper.style.display = 'block';
-                appContentWrapper.classList.remove('page-hidden');
-                setTimeout(() => {
-                    appContentWrapper.style.opacity = '1';
-                    configureAppForService(choice);
-                }, 50);
+                if(productChoiceScreen) productChoiceScreen.style.display = 'none';
+                if(appContentWrapper) { appContentWrapper.style.display = 'block'; appContentWrapper.classList.remove('page-hidden'); setTimeout(() => { appContentWrapper.style.opacity = '1'; configureAppForService(choice); }, 50); }
             }, 300);
         });
     });
-
-    if(backToChoiceButton) {
-        backToChoiceButton.addEventListener('click', showProductChoiceScreen);
-    }
-
+    document.querySelectorAll('.back-to-choice-section-button').forEach(button => button.addEventListener('click', showProductChoiceScreen));
 
     function configureAppForService(serviceType) {
-        resetAppContent(); // Hide everything first
+        resetAppContent(); 
+        document.getElementById('hero')?.classList.remove('page-hidden');
+        document.getElementById('calculator')?.classList.remove('page-hidden');
+        document.getElementById('contact')?.classList.remove('page-hidden');
+        if (productsSection) productsSection.classList.add('page-hidden');
 
-        const texts = serviceSpecificText[serviceType];
-        if (texts) {
-            if(heroTitle) heroTitle.textContent = texts.heroTitle;
-            if(heroSubtitle) heroSubtitle.textContent = texts.heroSubtitle;
-            if(productsTitle) productsTitle.textContent = texts.productsTitle;
-            if(productsSubtitle) productsSubtitle.textContent = texts.productsSubtitle;
-            if(calculatorSubtitle) calculatorSubtitle.textContent = texts.calculatorSubtitle;
-        }
-
-        document.querySelectorAll('#hero, #products, #calculator, #contact').forEach(s => s.classList.remove('page-hidden'));
-        backToChoiceButton.classList.remove('page-hidden');
-
-
+        let currentCalcTitle = "الحاسبة التفاعلية";
         if (serviceType === "certificates") {
-            document.getElementById('certificates-grid').classList.remove('page-hidden');
-            if(certificateCalculatorWrapper) certificateCalculatorWrapper.classList.remove('page-hidden');
+            currentCalcTitle = "حاسبات الشهادات";
+            if(certificateTotalEarningsWrapper) certificateTotalEarningsWrapper.classList.remove('page-hidden');
+            if(certificatePeriodicPayoutWrapper) certificatePeriodicPayoutWrapper.classList.remove('page-hidden');
+            if(certsBackButtonContainer) certsBackButtonContainer.classList.remove('page-hidden');
+            updateCertificateTypeChanged();
         } else if (serviceType === "loans") {
-            document.getElementById('loans-grid').classList.remove('page-hidden');
-            if(loanCalculatorWrapper) loanCalculatorWrapper.classList.remove('page-hidden');
+            currentCalcTitle = "حاسبة أقساط القروض";
+            if(revampedLoanCalculatorWrapper) revampedLoanCalculatorWrapper.classList.remove('page-hidden'); 
+            if(loansBackButtonContainer) loansBackButtonContainer.classList.remove('page-hidden');
+            populateLoanTypes(); updateRevampedLoanCalculator(); 
         } else if (serviceType === "deposits") {
-            document.getElementById('deposits-grid').classList.remove('page-hidden');
-            if(depositCalculatorPlaceholder) depositCalculatorPlaceholder.classList.remove('page-hidden');
+            currentCalcTitle = "حاسبة الودائع لأجل";
+            if(termDepositCalculatorWrapper) termDepositCalculatorWrapper.classList.remove('page-hidden');
+            if(depositsBackButtonContainer) depositsBackButtonContainer.classList.remove('page-hidden');
+            updateNewDepositCalculator();
         }
+        if(calculatorSectionTitle) calculatorSectionTitle.textContent = currentCalcTitle;
         
-        // Scroll to hero section of the "page"
         const heroSectionEl = document.getElementById('hero');
-        if (heroSectionEl) {
-            setTimeout(() => { // Delay scroll slightly for content to render
-                 window.scrollTo({ top: heroSectionEl.offsetTop - 70, behavior: 'smooth' });
-            }, 100);
+        if (heroSectionEl) { setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100); }
+        initializeAppFunctions(serviceType);
+    }
+    
+    function updateCertificateTypeChanged() { 
+        if (!certSelectTypeEl || !certRateOptionsWrapperEl || !certSelectRateOptionEl || !payoutCalcDisplayRateEl || !payoutCalcAmountLabelEl) return;
+        const selectedCertKey = certSelectTypeEl.value; const certDef = certificateDefinitions[selectedCertKey];
+        certSelectRateOptionEl.innerHTML = ''; 
+        if (certDef.options.length > 1) {
+            certRateOptionsWrapperEl.style.display = 'block';
+            certDef.options.forEach((opt, index) => {
+                const optionEl = document.createElement('option'); optionEl.value = opt.annualRate; optionEl.textContent = opt.text; optionEl.dataset.currency = opt.currency;
+                if (index === 0) { optionEl.selected = true; currentCertificateAnnualRate = opt.annualRate; payoutCalcDisplayRateEl.textContent = opt.annualRate.toFixed(2); updateCertAmountLabelCurrency(opt.currency); }
+                certSelectRateOptionEl.appendChild(optionEl);
+            });
+        } else { 
+            certRateOptionsWrapperEl.style.display = 'none'; currentCertificateAnnualRate = certDef.options[0].annualRate; payoutCalcDisplayRateEl.textContent = certDef.options[0].annualRate.toFixed(2); updateCertAmountLabelCurrency(certDef.options[0].currency);
         }
-        initializeAppFunctions(); // Initialize common functions like charts and mobile menu
+        updatePeriodicCertPayout();
+    }
+    function updateCertificateRateOptionChanged() { 
+        if (!certSelectRateOptionEl || !payoutCalcDisplayRateEl || !payoutCalcAmountLabelEl) return;
+        const selectedOption = certSelectRateOptionEl.options[certSelectRateOptionEl.selectedIndex];
+        currentCertificateAnnualRate = parseFloat(selectedOption.value); payoutCalcDisplayRateEl.textContent = currentCertificateAnnualRate.toFixed(2);
+        updateCertAmountLabelCurrency(selectedOption.dataset.currency); updatePeriodicCertPayout();
+    }
+    function updateCertAmountLabelCurrency(currency) { 
+        if (payoutCalcAmountLabelEl) { payoutCalcAmountLabelEl.textContent = `مبلغ الشهادة (${currency === "USD" ? "بالدولار" : "بالجنيه المصري"})`; }
+    }
+    function updatePeriodicCertPayout() { 
+        if (!payoutCalcAmountEl || !payoutCalcFrequencyEl || !periodicPayoutResultEl || !periodicPayoutDescriptionEl || (certificatePeriodicPayoutWrapper && certificatePeriodicPayoutWrapper.classList.contains('page-hidden'))) return;
+        const amount = parseFloat(payoutCalcAmountEl.value) || 0; const calculationFrequency = payoutCalcFrequencyEl.value;
+        const selectedCertKey = certSelectTypeEl.value; const certDef = certificateDefinitions[selectedCertKey];
+        let currencySymbol = "جنيه";
+        if (certDef) { const currentRateOptionIndex = certDef.options.length > 1 && certSelectRateOptionEl.selectedIndex >= 0 ? certSelectRateOptionEl.selectedIndex : 0; if (certDef.options[currentRateOptionIndex] && certDef.options[currentRateOptionIndex].currency === "USD") { currencySymbol = "دولار"; } }
+        if (amount <= 0 || currentCertificateAnnualRate <= 0) { periodicPayoutDescriptionEl.textContent = "العائد الدوري المقدر:"; periodicPayoutResultEl.textContent = `0.00 ${currencySymbol}`; return; }
+        let payout = 0; const annualRateDecimal = currentCertificateAnnualRate / 100; let descriptionText = ""; let periodsPerYear = 12;
+        switch (calculationFrequency) { case "daily": periodsPerYear = 365; descriptionText = "العائد اليومي المقدر:"; break; case "monthly": periodsPerYear = 12; descriptionText = "العائد الشهري المقدر:"; break; case "quarterly": periodsPerYear = 4; descriptionText = "العائد الربع سنوي المقدر:"; break; case "semi-annually": periodsPerYear = 2; descriptionText = "العائد النصف سنوي المقدر:"; break; case "annually": periodsPerYear = 1; descriptionText = "العائد السنوي المقدر:"; break; }
+        payout = amount * (annualRateDecimal / periodsPerYear);
+        periodicPayoutDescriptionEl.textContent = descriptionText; periodicPayoutResultEl.textContent = `${payout.toFixed(2)} ${currencySymbol}`;
     }
 
+    function populateLoanTypes() { 
+        if (!loanSelectTypeEl) return;
+        loanSelectTypeEl.innerHTML = ''; 
+        loanTypes.forEach(type => { const option = document.createElement('option'); option.value = type; option.textContent = type; loanSelectTypeEl.appendChild(option); });
+    }
+    function updateRevampedLoanCalculator() { 
+        if (!loanManualRateEl || !loanCustomAmountEl || !loanCustomTermYearsEl || !loanRepaymentFrequencyEl || !loanCustomInstallmentDescEl || !loanCustomInstallmentResultEl || (revampedLoanCalculatorWrapper && revampedLoanCalculatorWrapper.classList.contains('page-hidden'))) return;
+        const annualRate = parseFloat(loanManualRateEl.value) || 0; const P = parseFloat(loanCustomAmountEl.value) || 0; 
+        const termYears = parseInt(loanCustomTermYearsEl.value) || 0; const frequency = loanRepaymentFrequencyEl.value;
+        let periodsPerYear = 12; let descText = "القسط الشهري المقدر:";
+        if (frequency === "quarterly") { periodsPerYear = 4; descText = "القسط الربع سنوي المقدر:"; } else if (frequency === "semi-annually") { periodsPerYear = 2; descText = "القسط النصف سنوي المقدر:"; } else if (frequency === "annually") { periodsPerYear = 1; descText = "القسط السنوي المقدر:"; }
+        let installment = 0;
+        if (P > 0 && termYears > 0 && annualRate >= 0 && annualRate <=100) { const i = (annualRate / 100) / periodsPerYear; const n = termYears * periodsPerYear; if (annualRate === 0 || i === 0) { installment = P / n; } else { installment = P * i * Math.pow(1 + i, n) / (Math.pow(1 + i, n) - 1); } }
+        loanCustomInstallmentDescEl.textContent = descText; loanCustomInstallmentResultEl.textContent = `${installment.toFixed(2)} جنيه`;
+    }
 
-    function initializeAppFunctions() {
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
-        const products = {
-            certificates: [
-                { name: "الشهادة الثلاثية ذات العائد الثابت", rate: 19.5, term: 3, payout: "شهري وربع سنوي", min: 1000, details: "استثمار آمن بعائد ثابت ومميز يُصرف شهرياً. مثال على سعر فائدة شائع." },
-                { name: "شهادة الحصاد (متغيرة العائد)", rate: 23.25, term: 3, payout: "يومي وشهري", min: 1000, details: "شهادة مرتبطة بمؤشرات اقتصادية، تمنح فرصة لعائد أعلى. العائد المعروض ." },
-                { name: " شهادة ادخار خماسية الدولارية", rate: 5, term: 5, payout: "شهريًا أو ربع سنويًا أو نصف سنويًا أو سنويًا", min: 100, details: "لأصحاب النظرة الاستثمارية طويلة الأجل، بعائد يصرف كل شهر. سعر الفائدة ." }
-            ],
-            deposits: [
-                { name: "وديعة لأجل ثابت (شهرية)", details: "احفظ أموالك لمدة شهر واستفد من عائد تنافسي. (مثال: عائد 11.25% لمبلغ 2000 جنيه فأكثر)." },
-                { name: "حساب التوفير المميز", details: "ادخر بمرونة مع إمكانية السحب والإيداع، واحصل على عائد دوري على رصيدك. (مثال: شرائح عائد تبدأ من 11.75%)" },
-                { name: "الحساب الجاري ذو العائد اليومي", details: "لإدارة معاملاتك اليومية مع ميزة الحصول على عائد يُحتسب يومياً. (مثال: شرائح عائد تصاعدية)" }
-            ],
-            loans: [
-                { name: "القرض الشخصي", details: "لتلبية احتياجاتك المتنوعة، تمويل يصل إلى 1.5 مليون جنيه وفترة سداد حتى 10 سنوات. (مثال: فائدة متناقصة تبدأ من 22.5%)", maxAmount: "1,500,000", maxTerm: 10, typicalRate: 22.5 },
-                { name: "قرض السيارة", details: "امتلك سيارتك بتمويل يصل إلى 100% من قيمتها وإجراءات سريعة. (مثال: فائدة متناقصة، تمويل حتى 2 مليون جنيه)", maxAmount: "2,000,000", maxTerm: 8, typicalRate: 21.5 },
-                { name: "التمويل العقاري", details: "حقق حلم امتلاك منزلك بشروط ميسرة وفترات سداد طويلة. (مثال: تمويل حتى 5 مليون جنيه، فائدة تنافسية)", maxAmount: "5,000,000", maxTerm: 20, typicalRate: 20.0 }
-            ]
-        };
-
-        function createCard(item, type) {
-            let content = `<div class="bg-white rounded-lg shadow-md p-6 flex flex-col h-full hover:shadow-xl transition-shadow duration-300">
-                <h3 class="text-xl font-bold text-gray-900 mb-2">${item.name}</h3>
-                <p class="text-gray-600 flex-grow mb-4">${item.details}</p>`;
-            
-            if (type === 'certificates') {
-                content += `<div class="mt-auto pt-4 border-t border-gray-100 text-sm space-y-2">
-                    <p><strong>العائد السنوي:</strong> ${item.rate}%</p>
-                    <p><strong>المدة:</strong> ${item.term} سنوات</p>
-                    <p><strong>دورية الصرف:</strong> ${item.payout}</p>
-                    <p><strong>الحد الأدنى:</strong> ${item.min} جنية/دولار</p>
-                </div>`;
-            } else if (type === 'loans') {
-                 content += `<div class="mt-auto pt-4 border-t border-gray-100 text-sm space-y-2">
-                    <p><strong>أقصى مبلغ :</strong> ${item.maxAmount} جنيه</p>
-                    <p><strong>أقصى مدة :</strong> ${item.maxTerm} سنوات</p>
-                    <p><strong>سعر فائدة متناقصة :</strong> ${item.typicalRate}%</p>
-                </div>`;
+    function lookupDepositRate(currency, termKey, amount) { 
+        const rateTiers = depositInterestRates[currency]; if (!rateTiers) return 0;
+        let applicableRate = 0;
+        if (currency === "EGP") { 
+            const specificHighTier = rateTiers.find(tier => tier.minAmount === 10000 && tier.rates[termKey] !== undefined);
+            if (specificHighTier && amount >= specificHighTier.minAmount) { return specificHighTier.rates[termKey]; } 
+            const generalTier = rateTiers.find(tier => tier.minAmount === 2000 && tier.rates[termKey] !== undefined);
+            if (generalTier && amount >= generalTier.minAmount) { return generalTier.rates[termKey]; }
+            return 0; 
+        } else { 
+            for (const tier of rateTiers) { // Corrected iteration for USD, GBP, EUR
+                if (amount >= tier.minAmount && amount <= (tier.maxAmount || Infinity)) {
+                    if (tier.rates && tier.rates[termKey] !== undefined) {
+                        applicableRate = tier.rates[termKey];
+                        break; 
+                    }
+                }
             }
-            content += `</div>`;
-            return content;
         }
+        return applicableRate;
+    }
+    function updateNewDepositCalculator() { 
+        if (!depSelectCurrencyEl || !depSelectTermEl || !depCalcAmountEl || !depDisplayRateEl || !depInterestEarnedResultEl || !depCalcAmountLabelEl || (termDepositCalculatorWrapper && termDepositCalculatorWrapper.classList.contains('page-hidden'))) return;
+        const currency = depSelectCurrencyEl.value; const termKey = depSelectTermEl.value; const amount = parseFloat(depCalcAmountEl.value) || 0;
+        depCalcAmountLabelEl.textContent = `مبلغ الوديعة (${currencySymbols[currency] || currency})`;
+        const annualRate = lookupDepositRate(currency, termKey, amount); depDisplayRateEl.textContent = annualRate.toFixed(3);
+        let interestEarned = 0; const termDuration = termDurationsInYears[termKey];
+        if (amount > 0 && annualRate > 0 && termDuration > 0) { interestEarned = amount * (annualRate / 100) * termDuration; }
+        depInterestEarnedDescEl.textContent = `إجمالي العائد للوديعة (لمدة ${depSelectTermEl.options[depSelectTermEl.selectedIndex].text}):`;
+        depInterestEarnedResultEl.textContent = `${interestEarned.toFixed(2)} ${currencySymbols[currency] || currency}`;
+    }
 
-        const certificatesGrid = document.getElementById('certificates-grid');
-        const depositsGrid = document.getElementById('deposits-grid');
-        const loansGrid = document.getElementById('loans-grid');
-        
-        if(certificatesGrid && certificatesGrid.innerHTML.trim() === '') products.certificates.forEach(item => { certificatesGrid.innerHTML += createCard(item, 'certificates'); });
-        if(depositsGrid && depositsGrid.innerHTML.trim() === '') products.deposits.forEach(item => { depositsGrid.innerHTML += createCard(item, 'deposits'); });
-        if(loansGrid && loansGrid.innerHTML.trim() === '') products.loans.forEach(item => { loansGrid.innerHTML += createCard(item, 'loans'); });
-        
+    function updateCertificateTotalEarnings() { 
+         if(!certTotalAmountEl || (certificateTotalEarningsWrapper && certificateTotalEarningsWrapper.classList.contains('page-hidden'))) return;
+        const amount = parseFloat(certTotalAmountEl.value) || 0, rate = parseFloat(certTotalRateEl.value) || 0, years = parseInt(certTotalYearsEl.value) || 0;
+        const labels = Array.from({ length: years + 1 }, (_, i) => `سنة ${i}`); let currentAmount = amount; const data = [currentAmount];
+        for (let i = 0; i < years; i++) { currentAmount += currentAmount * (rate / 100); data.push(parseFloat(currentAmount.toFixed(2))); }
+        const chartData = { labels, datasets: [{ label: 'إجمالي أرباح الشهادة', data, borderColor: '#0e7490', backgroundColor: 'rgba(14, 116, 144, 0.1)', fill: true }] };
+        const ctx = document.getElementById('certificateTotalEarningsChart')?.getContext('2d'); if(!ctx) return;
+        if (certificateTotalEarningsChart) certificateTotalEarningsChart.destroy();
+        certificateTotalEarningsChart = new Chart(ctx, { type: 'line', data: chartData, options: { responsive: true, maintainAspectRatio:false, plugins:{legend:{labels:{font:{family:'Cairo'}}}}, scales:{y:{ticks:{callback:v=>`${v} ج.م`,font:{family:'Cairo'}}},x:{ticks:{font:{family:'Cairo'}}}}}});
+    }
+    
+    function initializeAppFunctions(currentServiceType) {
+        if(document.getElementById('current-year')) document.getElementById('current-year').textContent = new Date().getFullYear();
         const navLinks = document.querySelectorAll('header a.nav-link[href^="#"]');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        navLinks.forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement && !targetElement.classList.contains('page-hidden')) {
-                    let offset = 80; // Height of sticky header
-                    if (targetId === '#hero' && !document.getElementById('hero').classList.contains('page-hidden')) offset = 0;
-                    
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
-                }
-                if (mobileMenu && mobileMenu.classList.contains('hidden') === false) {
-                    mobileMenu.classList.add('hidden');
-                }
-            });
-        });
-
-
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
+        navLinks.forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const targetId = this.getAttribute('href'), targetElement = document.querySelector(targetId); if (targetElement) { const offsetPosition = targetElement.offsetTop - (document.querySelector('header')?.offsetHeight || 70); window.scrollTo({ top: offsetPosition, behavior: "smooth" }); } const mobileMenu = document.getElementById('mobile-menu'); if (mobileMenu && !mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden'); }); });
+        const mobileMenu = document.getElementById('mobile-menu'), mobileMenuButton = document.getElementById('mobile-menu-button');
+        if (mobileMenuButton && mobileMenu) mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
         
+        if (certTotalAmountEl) { [certTotalAmountEl, certTotalRateEl, certTotalYearsEl].forEach(el => el?.addEventListener('input', updateCertificateTotalEarnings)); }
+        if (certSelectTypeEl) certSelectTypeEl.addEventListener('change', updateCertificateTypeChanged);
+        if (certSelectRateOptionEl) certSelectRateOptionEl.addEventListener('change', updateCertificateRateOptionChanged);
+        if (payoutCalcAmountEl) payoutCalcAmountEl.addEventListener('input', updatePeriodicCertPayout);
+        if (payoutCalcFrequencyEl) payoutCalcFrequencyEl.addEventListener('change', updatePeriodicCertPayout);
+        if (currentServiceType === 'certificates') { updateCertificateTotalEarnings(); updateCertificateTypeChanged(); }
 
-        let earningsChart, loanChart;
-
-        function updateEarningsChart() {
-            const certAmountEl = document.getElementById('cert-amount');
-            if(!certAmountEl || certAmountEl.closest('.page-hidden')) return;
-
-            const amount = parseFloat(certAmountEl.value) || 0;
-            const rate = parseFloat(document.getElementById('cert-rate').value) || 0;
-            const years = parseInt(document.getElementById('cert-years').value) || 0;
-
-            const labels = Array.from({ length: years + 1 }, (_, i) => `سنة ${i}`);
-            const data = [];
-            let currentAmount = amount;
-            data.push(currentAmount);
-
-            for (let i = 0; i < years; i++) {
-                currentAmount += currentAmount * (rate / 100);
-                data.push(parseFloat(currentAmount.toFixed(2)));
-            }
-
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                    label: 'إجمالي المبلغ مع الأرباح (مثال)',
-                    data: data,
-                    borderColor: '#0e7490',
-                    backgroundColor: 'rgba(14, 116, 144, 0.1)',
-                    fill: true,
-                    tension: 0.1
-                }]
-            };
-            const earningsChartCanvas = document.getElementById('earningsChart');
-            if (!earningsChartCanvas) return;
-            const ctx = earningsChartCanvas.getContext('2d');
-
-            if (earningsChart) {
-                earningsChart.destroy(); // Destroy previous instance before creating new one
-            }
-            earningsChart = new Chart(ctx, { // Always create new instance
-                type: 'line',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { font: { family: 'Cairo'}}},
-                        tooltip: { mode: 'index', intersect: false, bodyFont: {family: 'Cairo'}, titleFont: {family: 'Cairo'} }
-                    },
-                    scales: {
-                        y: { beginAtZero: false, ticks: { callback: value => `${value} ج.م`, font: {family: 'Cairo'} } },
-                        x: { ticks: { font: {family: 'Cairo'} } }
-                    }
-                }
-            });
-        }
-
-        function updateLoanCalculator() {
-            const loanAmountEl = document.getElementById('loan-amount');
-            if(!loanAmountEl || loanAmountEl.closest('.page-hidden')) return;
-
-            const amount = parseFloat(loanAmountEl.value) || 0;
-            const years = parseInt(document.getElementById('loan-years').value) || 0;
-            const annualRate = parseFloat(document.getElementById('loan-rate').value) || 0;
-            
-            const monthlyRate = annualRate / 12 / 100;
-            const numberOfPayments = years * 12;
-            
-            let monthlyPayment = 0;
-            if (amount <=0 || years <= 0 || annualRate < 0) { 
-                monthlyPayment = 0;
-            } else if (annualRate === 0 && numberOfPayments > 0) {
-                monthlyPayment = amount / numberOfPayments;
-            }
-            else if (monthlyRate > 0 && numberOfPayments > 0) {
-                monthlyPayment = amount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-            }
-
-            const monthlyPaymentEl = document.getElementById('monthly-payment');
-            if(monthlyPaymentEl) monthlyPaymentEl.textContent = `${monthlyPayment.toFixed(2)} جنيه`;
-
-            const totalPayment = monthlyPayment * numberOfPayments;
-            const totalInterest = (totalPayment > amount && amount > 0 && numberOfPayments > 0) ? totalPayment - amount : 0;
-            const principalAmount = (amount > 0 && totalPayment >= amount && numberOfPayments > 0) ? amount : 0;
-
-
-            const chartData = {
-                labels: ['أصل المبلغ (مثال)', 'إجمالي الفوائد (مثال)'],
-                datasets: [{
-                    data: [principalAmount, totalInterest],
-                    backgroundColor: ['#0e7490', '#f97316'],
-                    hoverOffset: 4
-                }]
-            };
-            const loanChartCanvas = document.getElementById('loanChart');
-            if(!loanChartCanvas) return;
-            const ctx = loanChartCanvas.getContext('2d');
-
-            if (loanChart) {
-                loanChart.destroy(); 
-            }
-            loanChart = new Chart(ctx, { 
-                type: 'doughnut',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Cairo'}}},
-                        tooltip: { bodyFont: {family: 'Cairo'}, titleFont: {family: 'Cairo'} }
-                    }
-                }
-            });
-        }
+        const revampedLoanInputs = [loanManualRateEl, loanCustomAmountEl, loanCustomTermYearsEl, loanRepaymentFrequencyEl, loanSelectTypeEl];
+        revampedLoanInputs.forEach(el => { if(el) el.addEventListener('input', updateRevampedLoanCalculator); });
+        if (currentServiceType === 'loans') { populateLoanTypes(); updateRevampedLoanCalculator(); }
         
-        const certAmountEl = document.getElementById('cert-amount');
-        if (certAmountEl) {
-            certAmountEl.addEventListener('input', updateEarningsChart);
-            document.getElementById('cert-rate').addEventListener('input', updateEarningsChart);
-            document.getElementById('cert-years').addEventListener('input', updateEarningsChart);
-            if(!certificateCalculatorWrapper.classList.contains('page-hidden')) updateEarningsChart();
-        }
-        
-        const loanAmountEl = document.getElementById('loan-amount');
-        if (loanAmountEl) {
-            loanAmountEl.addEventListener('input', updateLoanCalculator);
-            document.getElementById('loan-years').addEventListener('input', updateLoanCalculator);
-            document.getElementById('loan-rate').addEventListener('input', updateLoanCalculator);
-            if(!loanCalculatorWrapper.classList.contains('page-hidden')) updateLoanCalculator();
-        }
+        const termDepositInputs = [depSelectCurrencyEl, depSelectTermEl, depCalcAmountEl];
+        termDepositInputs.forEach(el => { if(el) el.addEventListener('input', updateNewDepositCalculator); });
+        if (currentServiceType === 'deposits') { updateNewDepositCalculator(); }
     }
 });
 </script>
-
 </body>
 </html>
