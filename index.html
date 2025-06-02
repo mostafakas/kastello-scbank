@@ -10,92 +10,392 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f8fafc; /* خلفية عامة أفتح قليلاً */
+        }
         .chart-container { position: relative; height: 300px; max-height: 40vh; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; }
         .page-hidden { display: none !important; }
         .modal-screen { transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
         #app-content-wrapper { transition: opacity 0.5s ease-in-out; }
-        .choice-button { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
-        .choice-button:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        /* أنماط بطاقات اختيار المنتج/الخدمة الجديدة */
+        .product-card {
+            background-color: white;
+            border-radius: 0.75rem; /* 12px */
+            padding: 1.5rem; /* 24px */
+            border: 1px solid #e2e8f0; /* حد رقيق */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04); /* ظل أنعم */
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border-color 0.25s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+        .product-card:hover {
+            transform: translateY(-5px); /* تأثير رفع طفيف */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* ظل أوضح عند التحويم */
+            border-color: #0891b2; /* تغيير لون الحد عند التحويم */
+        }
+        .product-card-icon {
+            font-size: 2.25rem; /* 36px */
+            width: 4rem; /* 64px */
+            height: 4rem; /* 64px */
+            border-radius: 0.5rem; /* زوايا دائرية للأيقونة */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            align-self: flex-end;
+        }
+        .product-card-title {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 700;
+            color: #111827; /* لون نص أغمق قليلاً */
+            margin-bottom: 0.5rem;
+        }
+        .product-card-description {
+            font-size: 0.875rem; /* 14px */
+            color: #4b5563; /* رمادي أغمق للوصف */
+            line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 1rem;
+        }
+        .product-card-cta {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0891b2;
+            align-self: flex-start;
+            margin-top: auto;
+            padding: 0.25rem 0;
+        }
+        .product-card-cta:hover {
+            color: #0e7490; /* أغمق قليلاً عند التحويم */
+        }
+
         .bank-logo-text { font-weight: 700; color: #0891b2; font-size: 1.75rem; line-height: 2.25rem; }
-        .back-to-choice-section-button { background-color: #0e7490; color: white; padding: 0.625rem 1.5rem; border-radius: 0.375rem; font-weight: 600; }
-        .back-to-choice-section-button:hover { background-color: #087287; }
-        .input-style { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.375rem; }
-        .input-style:focus { outline: none; box-shadow: 0 0 0 2px #06B6D4; border-color: #06B6D4; }
-        .service-section-title { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: #0891b2; margin-bottom: 1rem; display: flex; align-items: center; justify-content: flex-start; }
-        .service-subtitle { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; color: #0e7490; margin-bottom: 0.75rem; margin-top: 1.5rem; display: flex; align-items: center; justify-content: flex-start; }
+
+        .back-to-choice-section-button {
+            background-color: #0e7490; color: white; padding: 0.7rem 1.6rem;
+            border-radius: 0.375rem; font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .back-to-choice-section-button:hover {
+            background-color: #065f75;
+            transform: translateY(-1px);
+        }
+
+        /* Updated Input Style for Login and Calculators */
+        .input-style {
+            width: 100%; padding: 0.75rem 1rem; /* Increased padding */
+            border: 1px solid #d1d5db; border-radius: 0.5rem; /* More rounded */
+            background-color: #f9fafb;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            font-size: 1rem; /* Slightly larger font */
+        }
+        .input-style:focus {
+            outline: none;
+            border-color: #06b6d4; /* Cyan focus */
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25); /* Softer focus ring */
+            background-color: white;
+        }
+        /* Placeholder styling */
+        .input-style::placeholder {
+            color: #9ca3af;
+            opacity: 1;
+        }
+
+
+        #calculator {
+            background-color: #f8fafc;
+            padding-top: 2.5rem; padding-bottom: 2.5rem;
+        }
+        #calculator .bg-white { /* أغلفة الحاسبات والمعلومات */
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+            padding: 1.75rem;
+        }
+        #calculator-section-title {
+            color: #1e293b;
+            font-size: 2rem;
+        }
+        #calculator-subtitle { color: #64748b; }
+
+        .service-section-title {
+            font-size: 1.75rem;
+            font-weight: 700; color: #0891b2;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.625rem;
+            border-bottom: 2px solid #0891b2;
+            display: flex; align-items: center; justify-content: flex-start;
+        }
+        .service-subtitle {
+            font-size: 1.375rem;
+            font-weight: 600; color: #0e7490;
+            margin-bottom: 1rem; margin-top: 2rem;
+            display: flex; align-items: center; justify-content: flex-start;
+        }
         .service-list { list-style: none; padding-right: 0; margin-bottom: 1.5rem; }
-        .service-list li { display: flex; align-items: flex-start; margin-bottom: 0.75rem; color: #374151; }
+        .service-list li {
+            display: flex; align-items: flex-start;
+            margin-bottom: 0.625rem;
+            color: #374151;
+            padding: 0.625rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .service-list li:last-child { border-bottom: none; }
         .service-list li .bullet { color: #0891b2; margin-left: 0.75rem; margin-right:0; font-weight: bold; }
         .service-list ul { list-style: none; padding-right: 1.5rem; margin-top: 0.5rem; }
         .service-list ul li::before { content: "-"; color: #0e7490; margin-left: 0.5rem; }
-        .info-table { min-width: 100%; background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
-        .info-table th { background-color: #f9fafb; padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: 600; color: #374151; }
-        .info-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; color: #4b5563; }
+
+        .info-table {
+            min-width: 100%; background-color: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .info-table th {
+            background-color: #f1f5f9;
+            padding: 0.875rem 1.125rem;
+            border-bottom: 1px solid #cbd5e1;
+            text-align: right; font-weight: 600; color: #334155;
+            font-size: 0.9rem;
+        }
+        .info-table td {
+            padding: 0.875rem 1.125rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4b5563;
+            font-size: 0.875rem;
+        }
         .info-table tr:last-child td { border-bottom: none; }
-        .info-table tr:hover { background-color: #f9fafb; }
+        .info-table tr:hover { background-color: #f8fafc; }
+
+        .service-block-animate {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+        }
+        .service-block-animate.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #app-content-wrapper header {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+        }
+        #app-content-wrapper .nav-link {
+            font-weight: 600;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        #app-content-wrapper .nav-link:hover, #mobile-menu .nav-link:hover {
+            background-color: #e0f7fa;
+            color: #075985;
+        }
+        #mobile-menu {
+            border-top: 1px solid #e5e7eb;
+        }
+        #mobile-menu .nav-link {
+            font-weight: 600;
+        }
+
+        #hero {
+            padding-top: 5rem;
+            padding-bottom: 6rem;
+        }
+        #hero h1 {
+            font-size: 2.75rem;
+            line-height: 1.3;
+        }
+        @media (min-width: 768px) {
+            #hero h1 {
+                font-size: 3.25rem;
+            }
+        }
+        #hero p {
+            color: #bae6fd;
+            font-size: 1.125rem;
+            max-width: 650px;
+        }
+        #hero a { /* زر CTA */
+            padding: 0.8rem 2.25rem;
+            font-size: 1rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+        #hero a:hover {
+            background-color: #f0f9ff !important; /* لون أفتح عند التحويم */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Splash Screen Styles */
+        #splash-screen {
+            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out;
+        }
+        #splash-logo {
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        #enter-app-button {
+            transition: opacity 0.5s ease-in-out, background-color 0.2s ease, transform 0.2s ease;
+        }
+        #enter-app-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Revamped Login Modal Styles */
+        #login-modal .bank-logo-text {
+            color: #0891b2; /* Primary cyan */
+            font-size: 2.5rem; /* Larger logo */
+        }
+        #login-modal h2 {
+            color: #0e7490; /* Darker cyan for title */
+            font-weight: 700;
+            font-size: 1.75rem; /* Slightly smaller but bolder */
+        }
+        #login-modal .input-style { /* Already defined, but good to be aware */
+            background-color: #f8fafc; /* Light gray background */
+        }
+        #login-modal button[type="submit"] {
+            background-color: #0891b2; /* Primary cyan */
+            color: white;
+            padding: 0.875rem 1rem; /* More padding */
+            border-radius: 0.5rem; /* More rounded */
+            font-weight: 700; /* Bolder text */
+            font-size: 1.125rem; /* Larger font */
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 0.05em; /* Slight letter spacing */
+            box-shadow: 0 4px 6px -1px rgba(8, 145, 178, 0.3), 0 2px 4px -1px rgba(8, 145, 178, 0.2);
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        }
+        #login-modal button[type="submit"]:hover {
+            background-color: #06b6d4; /* Lighter cyan on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px -2px rgba(8, 145, 178, 0.4), 0 3px 7px -2px rgba(8, 145, 178, 0.3);
+        }
+
+        /* Welcome Message Modal Enhancement */
+        #welcome-message-modal .bank-logo-text {
+            font-size: 2rem; /* Slightly smaller logo for popup */
+            color: #0891b2;
+            margin-bottom: 0.75rem; /* Add some space below logo */
+        }
+        #welcome-message-modal h2 {
+            color: #0e7490;
+            font-weight: 700;
+            font-size: 1.6rem; /* Adjusted size */
+            margin-bottom: 0.75rem;
+        }
+        #welcome-message-modal p {
+            color: #374151; /* Darker gray for readability */
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        #welcome-message-modal > div { /* The inner white box */
+             box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.04);
+             border-top: 4px solid #0891b2; /* Accent border */
+        }
+
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800">
 
-    <div id="login-modal" class="modal-screen fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[100]">
-        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm mx-4 sm:max-w-md">
-            <div class="flex justify-center mb-6"><div class="bank-logo-text">بنك قناة السويس</div></div>
-            <h2 class="text-2xl font-bold text-center text-cyan-700 mb-6">تسجيل الدخول</h2>
-            <form id="login-form">
-                <div class="mb-4"><label for="username" class="block text-sm font-medium text-gray-700 mb-1">اسم المستخدم</label><input type="text" id="username" class="input-style" placeholder="ادخل اسم المستخدم" required></div>
-                <div class="mb-6"><label for="password" class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label><input type="password" id="password" class="input-style" placeholder="ادخل كلمة المرور" required></div>
-                <div id="login-error" class="text-red-600 text-sm mb-4 text-center font-semibold" style="display: none;"></div>
-                <button type="submit" class="w-full bg-cyan-700 text-white py-2.5 px-4 rounded-md hover:bg-cyan-800 font-semibold">دخـــول</button>
+    <div id="splash-screen" class="fixed inset-0 bg-cyan-700 flex flex-col items-center justify-center z-[120] opacity-0 invisible">
+        <div id="splash-logo" class="bank-logo-text text-white text-5xl mb-10 opacity-0 transform scale-90">
+            بنك قناة السويس
+        </div>
+        <button id="enter-app-button" class="bg-white text-cyan-700 font-bold py-3.5 px-12 rounded-full hover:bg-cyan-100 text-xl shadow-lg opacity-0" style="transition-delay: 0.5s;">
+            ابدأ الآن
+        </button>
+    </div>
+
+    <div id="login-modal" class="modal-screen fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-[100]" style="display: none; opacity: 0; visibility: hidden;">
+        <div class="bg-white p-8 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 ease-out scale-95 opacity-0" id="login-modal-content">
+            <div class="flex justify-center mb-8">
+                <div class="bank-logo-text">بنك قناة السويس</div>
+            </div>
+            <h2 class="text-3xl font-bold text-center text-cyan-700 mb-8">تسجيل الدخول إلى حسابك</h2>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-semibold text-gray-700 mb-1.5">اسم المستخدم</label>
+                    <input type="text" id="username" name="username" class="input-style" placeholder="ادخل اسم المستخدم الخاص بك" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-1.5">كلمة المرور</label>
+                    <input type="password" id="password" name="password" class="input-style" placeholder="ادخل كلمة المرور" required>
+                </div>
+                <div id="login-error" class="text-red-600 text-sm pt-1 text-center font-semibold" style="display: none;"></div>
+                <button type="submit" class="w-full">دخـــول</button>
             </form>
         </div>
     </div>
 
     <div id="welcome-message-modal" class="modal-screen fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[110]" style="display: none; opacity: 0; visibility: hidden;">
-        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm mx-4 text-center">
-            <h2 id="welcome-text" class="text-2xl font-bold text-cyan-700 mb-4"></h2><p class="text-gray-600">جارٍ تحضير حسابك...</p>
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg mx-4 text-center transform transition-all duration-300 ease-out scale-95 opacity-0" id="welcome-modal-content">
+            <div class="flex justify-center mb-4">
+                 <div class="bank-logo-text">بنك قناة السويس</div>
+            </div>
+            <h2 id="welcome-text" class="text-2xl font-bold text-cyan-700 mb-3"></h2>
+            <p id="welcome-subtext" class="text-gray-600 leading-relaxed">جارٍ تحضير حسابك بكل عناية...</p>
         </div>
     </div>
 
     <div id="product-choice-screen" class="modal-screen fixed inset-0 bg-slate-100 flex items-center justify-center z-[90]" style="display: none; opacity: 0; visibility: hidden;">
-        <div class="bg-white p-8 sm:p-12 rounded-xl shadow-2xl w-full max-w-2xl mx-4 text-center">
-            <div class="flex justify-center mb-8"><div class="bank-logo-text">بنك قناة السويس</div></div>
-            <h2 class="text-3xl font-bold text-cyan-800 mb-8">اختر الخدمة المطلوبة</h2>
-            <p class="text-gray-600 mb-10 text-lg">مرحباً بك <span id="welcome-username" class="font-semibold text-cyan-700"></span>!</p>
+        <div class="bg-white p-8 sm:p-10 rounded-xl shadow-2xl w-full max-w-3xl mx-4 text-center overflow-y-auto" style="max-height: 90vh;">
+            <div class="flex justify-center mb-6">
+                <div class="bank-logo-text">بنك قناة السويس</div>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-cyan-800 mb-4">خدماتنا ومنتجاتنا المصرفية</h2>
+            <p class="text-gray-600 mb-10 text-lg">مرحباً بك <span id="welcome-username" class="font-semibold text-cyan-700"></span>! اختر ما يناسبك.</p>
 
-            <div class="mb-10">
-                <h3 class="text-2xl font-semibold text-cyan-700 mb-6 border-b pb-2 border-cyan-100">المنتجات</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <button data-choice="certificates" class="choice-button bg-cyan-600 text-white py-8 px-4 rounded-lg shadow-md hover:bg-cyan-700">
-                        <span class="text-5xl block mb-3">📄</span>
-                        <span class="text-xl font-semibold">الشهادات</span>
-                    </button>
-                    <button data-choice="loans" class="choice-button bg-orange-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-orange-600">
-                        <span class="text-5xl block mb-3">💰</span>
-                        <span class="text-xl font-semibold">القروض</span>
-                    </button>
-                    <button data-choice="deposits" class="choice-button bg-teal-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-teal-600">
-                        <span class="text-5xl block mb-3">🏦</span>
-                        <span class="text-xl font-semibold">الودائع</span>
-                    </button>
+            <div class="mb-12">
+                <h3 class="text-2xl font-semibold text-cyan-700 mb-3 text-right border-b-2 border-cyan-200 pb-2">المنتجات المصرفية</h3>
+                <p class="text-gray-500 mb-6 text-right">استكشف مجموعتنا المتنوعة من المنتجات المصممة لتلبية احتياجاتك المالية.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="product-card" data-choice="certificates">
+                        <div class="product-card-icon bg-cyan-100 text-cyan-600">📄</div>
+                        <h4 class="product-card-title">الشهادات</h4>
+                        <p class="product-card-description">استثمر بأمان مع مجموعة متنوعة من شهادات الادخار ذات العوائد التنافسية.</p>
+                        <span class="product-card-cta">اكتشف الآن &rarr;</span>
+                    </div>
+                    <div class="product-card" data-choice="loans">
+                        <div class="product-card-icon bg-orange-100 text-orange-500">💰</div>
+                        <h4 class="product-card-title">القروض</h4>
+                        <p class="product-card-description">حلول تمويلية مرنة تلبي كافة احتياجاتك الشخصية والتجارية.</p>
+                        <span class="product-card-cta">اكتشف الآن &rarr;</span>
+                    </div>
+                    <div class="product-card" data-choice="deposits">
+                        <div class="product-card-icon bg-teal-100 text-teal-500">🏦</div>
+                        <h4 class="product-card-title">الودائع</h4>
+                        <p class="product-card-description">خيارات ودائع متنوعة لآجال مختلفة تناسب خططك للادخار بكفاءة.</p>
+                        <span class="product-card-cta">اكتشف الآن &rarr;</span>
+                    </div>
                 </div>
             </div>
 
             <div>
-                <h3 class="text-2xl font-semibold text-cyan-700 mb-6 border-b pb-2 border-cyan-100">الخدمات</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <button data-choice="e-wallet" class="choice-button bg-purple-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-purple-600">
-                        <span class="text-5xl block mb-3">📱</span>
-                        <span class="text-xl font-semibold">المحفظة الإلكترونية</span>
-                    </button>
-                    <button data-choice="internet-banking" class="choice-button bg-sky-500 text-white py-8 px-4 rounded-lg shadow-md hover:bg-sky-600">
-                        <span class="text-5xl block mb-3">💻</span>
-                        <span class="text-xl font-semibold">الإنترنت البنكي</span>
-                    </button>
+                <h3 class="text-2xl font-semibold text-cyan-700 mb-3 text-right border-b-2 border-cyan-200 pb-2">الخدمات الرقمية</h3>
+                <p class="text-gray-500 mb-6 text-right">قم بإدارة حساباتك وإجراء معاملاتك المصرفية بسهولة وأمان عبر قنواتنا الرقمية.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="product-card" data-choice="e-wallet">
+                        <div class="product-card-icon bg-purple-100 text-purple-600">📱</div>
+                        <h4 class="product-card-title">المحفظة الإلكترونية</h4>
+                        <p class="product-card-description">ادفع فواتيرك، حوّل الأموال، وتسوق عبر الإنترنت بكل سهولة وأمان.</p>
+                        <span class="product-card-cta">اعرف المزيد &rarr;</span>
                     </div>
+                    <div class="product-card" data-choice="internet-banking">
+                        <div class="product-card-icon bg-sky-100 text-sky-600">💻</div>
+                        <h4 class="product-card-title">الإنترنت البنكي</h4>
+                        <p class="product-card-description">تحكم في حساباتك من أي مكان وفي أي وقت عبر خدماتنا المصرفية المتطورة عبر الإنترنت.</p>
+                        <span class="product-card-cta">اعرف المزيد &rarr;</span>
+                    </div>
+                </div>
             </div>
-
-            <button id="logout-button-choice" class="mt-12 text-sm text-gray-500 hover:text-cyan-700 underline">تسجيل الخروج</button>
+            <button id="logout-button-choice" class="mt-10 text-sm text-gray-500 hover:text-cyan-700 underline">تسجيل الخروج</button>
         </div>
     </div>
 
@@ -125,7 +425,7 @@
                 <p id="hero-subtitle" class="text-lg md:text-xl text-cyan-200 max-w-3xl mx-auto mb-8">نظرة شاملة على أبرز منتجاتنا المصرفية وخدماتنا.</p>
                 <a href="#calculator" class="bg-white text-cyan-800 font-bold py-3 px-8 rounded-full hover:bg-cyan-100">استكشف الخيارات</a>
             </div></section>
-            
+
             <section id="products" class="page-section py-16 sm:py-20 page-hidden"> </section>
 
             <section id="calculator" class="page-section py-16 sm:py-20 bg-gray-100"><div class="container mx-auto px-4">
@@ -134,7 +434,8 @@
                     <p id="calculator-subtitle" class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">(الأرقام هي أمثلة توضيحية)</p>
                 </div>
                 <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-start">
-                    <div id="certificate-total-earnings-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden">
+
+                    <div id="certificate-total-earnings-wrapper" class="bg-white p-6 rounded-lg shadow-lg service-block-animate page-hidden">
                         <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة إجمالي أرباح الشهادات</h3>
                         <div class="space-y-4">
                             <div><label for="cert-total-amount" class="block text-sm font-medium">مبلغ الاستثمار (ج.م)</label><input type="number" id="cert-total-amount" value="10000" min="1000" class="input-style mt-1"></div>
@@ -143,7 +444,7 @@
                         </div>
                         <div class="mt-6"><div class="chart-container"><canvas id="certificateTotalEarningsChart"></canvas></div></div>
                     </div>
-                    <div id="certificate-periodic-payout-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden">
+                    <div id="certificate-periodic-payout-wrapper" class="bg-white p-6 rounded-lg shadow-lg service-block-animate page-hidden">
                         <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة العائد الدوري للشهادات</h3>
                         <div class="space-y-4">
                             <div><label for="cert-select-type" class="block text-sm font-medium">اختر الشهادة</label><select id="cert-select-type" class="input-style mt-1"><option value="triple_fixed">شهادة الادخار الثلاثية (عائد ثابت)</option><option value="alhosad">شهادة الحصاد</option><option value="dollar_3yr">شهادة دولارية (3 سنوات)</option><option value="dollar_5yr">شهادة دولارية (5 سنوات)</option></select></div>
@@ -154,45 +455,22 @@
                         </div>
                         <div class="mt-6 text-center"><p id="periodic-payout-description" class="text-gray-600">العائد الشهري المقدر:</p><p id="periodic-payout-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p></div>
                     </div>
-                    <div id="certs-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
+                    <div id="certs-back-button-container" class="md:col-span-2 mt-8 text-center service-block-animate page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
 
-                    <div id="revamped-loan-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden md:col-span-2">
+                    <div id="revamped-loan-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg service-block-animate page-hidden md:col-span-2">
                         <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة أقساط القروض</h3>
                         <div class="grid md:grid-cols-2 gap-x-6 gap-y-4">
-                            <div>
-                                <label for="loan-select-type" class="block text-sm font-medium text-gray-700">نوع القرض</label>
-                                <select id="loan-select-type" class="input-style mt-1"></select>
-                            </div>
-                            <div>
-                                <label for="loan-manual-rate" class="block text-sm font-medium text-gray-700">نسبة الفائدة السنوية (%)</label>
-                                <input type="number" id="loan-manual-rate" value="15" min="1" max="100" step="0.1" class="input-style mt-1">
-                            </div>
-                            <div>
-                                <label for="loan-custom-amount" class="block text-sm font-medium text-gray-700">قيمة القرض (بالجنيه المصري)</label>
-                                <input type="number" id="loan-custom-amount" value="50000" min="1000" step="1000" class="input-style mt-1">
-                            </div>
-                            <div>
-                                <label for="loan-custom-term-years" class="block text-sm font-medium text-gray-700">فترة السداد (سنوات)</label>
-                                <input type="number" id="loan-custom-term-years" value="5" min="1" max="30" step="1" class="input-style mt-1">
-                            </div>
-                            <div class="md:col-span-2">
-                                <label for="loan-repayment-frequency" class="block text-sm font-medium text-gray-700">دورية استحقاق القسط</label>
-                                <select id="loan-repayment-frequency" class="input-style mt-1">
-                                    <option value="monthly" selected>شهرياً</option>
-                                    <option value="quarterly">ربع سنوياً</option>
-                                    <option value="semi-annually">نصف سنوياً</option>
-                                    <option value="annually">سنوياً</option>
-                                </select>
-                            </div>
+                            <div><label for="loan-select-type" class="block text-sm font-medium text-gray-700">نوع القرض</label><select id="loan-select-type" class="input-style mt-1"></select></div>
+                            <div><label for="loan-manual-rate" class="block text-sm font-medium text-gray-700">نسبة الفائدة السنوية (%)</label><input type="number" id="loan-manual-rate" value="15" min="1" max="100" step="0.1" class="input-style mt-1"></div>
+                            <div><label for="loan-custom-amount" class="block text-sm font-medium text-gray-700">قيمة القرض (بالجنيه المصري)</label><input type="number" id="loan-custom-amount" value="50000" min="1000" step="1000" class="input-style mt-1"></div>
+                            <div><label for="loan-custom-term-years" class="block text-sm font-medium text-gray-700">فترة السداد (سنوات)</label><input type="number" id="loan-custom-term-years" value="5" min="1" max="30" step="1" class="input-style mt-1"></div>
+                            <div class="md:col-span-2"><label for="loan-repayment-frequency" class="block text-sm font-medium text-gray-700">دورية استحقاق القسط</label><select id="loan-repayment-frequency" class="input-style mt-1"><option value="monthly" selected>شهرياً</option><option value="quarterly">ربع سنوياً</option><option value="semi-annually">نصف سنوياً</option><option value="annually">سنوياً</option></select></div>
                         </div>
-                        <div class="mt-6 text-center">
-                            <p id="loan-custom-installment-description" class="text-gray-600">القسط الشهري المقدر:</p>
-                            <p id="loan-custom-installment-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p>
-                        </div>
+                        <div class="mt-6 text-center"><p id="loan-custom-installment-description" class="text-gray-600">القسط الشهري المقدر:</p><p id="loan-custom-installment-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p></div>
                     </div>
-                    <div id="loans-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
-                    
-                    <div id="term-deposit-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden md:col-span-2">
+                    <div id="loans-back-button-container" class="md:col-span-2 mt-8 text-center service-block-animate page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
+
+                    <div id="term-deposit-calculator-wrapper" class="bg-white p-6 rounded-lg shadow-lg service-block-animate page-hidden md:col-span-2">
                         <h3 class="text-xl font-bold mb-4 text-cyan-800">حاسبة عائد الودائع لأجل</h3>
                         <div class="grid md:grid-cols-2 gap-x-6 gap-y-4">
                             <div><label for="dep-select-currency" class="block text-sm font-medium">عملة الوديعة</label><select id="dep-select-currency" class="input-style mt-1"><option value="EGP" selected>جنيه مصري</option><option value="USD">دولار أمريكي</option><option value="GBP">جنيه استرليني</option><option value="EUR">يورو</option></select></div>
@@ -200,342 +478,77 @@
                             <div class="md:col-span-2"><label for="dep-calc-amount" id="dep-calc-amount-label" class="block text-sm font-medium">مبلغ الوديعة (بالجنيه المصري)</label><input type="number" id="dep-calc-amount" value="10000" min="100" class="input-style mt-1"></div>
                         </div>
                         <div class="mt-4"><p class="text-sm text-gray-500">سعر الفائدة السنوي المطبق: <span id="dep-display-rate" class="font-semibold text-cyan-700">0.00</span>%</p></div>
-                        <div class="mt-6 text-center">
-                            <p id="dep-interest-earned-description" class="text-gray-600">إجمالي العائد للوديعة بنهاية المدة:</p>
-                            <p id="dep-interest-earned-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p>
-                        </div>
+                        <div class="mt-6 text-center"><p id="dep-interest-earned-description" class="text-gray-600">إجمالي العائد للوديعة بنهاية المدة:</p><p id="dep-interest-earned-result" class="text-2xl font-bold text-cyan-700">0.00 جنيه</p></div>
                     </div>
-                    <div id="deposits-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
+                    <div id="deposits-back-button-container" class="md:col-span-2 mt-8 text-center service-block-animate page-hidden"><button class="back-to-choice-section-button">اختر منتج اخر</button></div>
 
-                    <div id="e-wallet-section-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden md:col-span-2 text-right">
+                    <div id="e-wallet-section-wrapper" class="bg-white p-6 rounded-lg shadow-lg service-block-animate page-hidden md:col-span-2 text-right">
                         <h3 class="service-section-title">
                             <span class="text-purple-500 ml-3 text-3xl">📱</span> محفظة SCB E-Wallet – بنك قناة السويس
                         </h3>
                         <p class="text-gray-700 mb-6 leading-relaxed">
                             محفظة رقمية آمنة تتيح لك تحويل الأموال، دفع الفواتير، الشراء، والسحب أو الإيداع من خلال هاتفك فقط، دون الحاجة لحساب بنكي.
                         </p>
-                    
-                        <h4 class="service-subtitle">
-                            <span class="text-green-500 ml-2">✅</span> المميزات:
-                        </h4>
-                        <ul class="service-list">
-                            <li><span class="bullet">✓</span> تحويل الأموال لأي محفظة في مصر.</li>
-                            <li><span class="bullet">✓</span> دفع الفواتير والمخالفات والتبرعات.</li>
-                            <li><span class="bullet">✓</span> الشراء باستخدام QR Code.</li>
-                            <li><span class="bullet">✓</span> سحب/إيداع من ماكينات ATM أو فوري.</li>
-                        </ul>
-                    
-                        <h4 class="service-subtitle">
-                            <span class="text-yellow-500 ml-2">📝</span> الاشتراك:
-                        </h4>
-                        <div class="mb-4">
-                            <h5 class="text-lg font-semibold text-gray-800 mb-2">الشروط:</h5>
-                            <ul class="service-list">
-                                <li><span class="bullet">▪</span> مصري الجنسية.</li>
-                                <li><span class="bullet">▪</span> بطاقة رقم قومي سارية.</li>
-                                <li><span class="bullet">▪</span> رقم هاتف مسجل باسمك.</li>
-                            </ul>
-                        </div>
-                        <div class="mb-6">
-                            <h5 class="text-lg font-semibold text-gray-800 mb-2">الخطوات:</h5>
-                            <ol class="space-y-2 text-gray-700 list-decimal list-outside pr-5">
-                                <li>قدّم على الخدمة من الفرع أو الموقع.</li>
-                                <li>حمّل التطبيق.</li>
-                                <li>فعّل المحفظة بكود التفعيل.</li>
-                                <li>أنشئ رقم سري وابدأ الاستخدام.</li>
-                            </ol>
-                        </div>
-                    
-                        <h4 class="service-subtitle">
-                            <span class="text-blue-500 ml-2">💰</span> شحن المحفظة:
-                        </h4>
-                        <ul class="service-list">
-                            <li><span class="bullet">▸</span> من الحساب البنكي.</li>
-                            <li><span class="bullet">▸</span> من ماكينات ATM (ميزة).</li>
-                            <li><span class="bullet">▸</span> من خلال فروع فوري (باستخدام OTP).</li>
-                        </ul>
-                    
-                        <h4 class="service-subtitle">
-                            <span class="text-red-500 ml-2">🔒</span> الحدود:
-                        </h4>
-                        <ul class="service-list">
-                            <li><span class="bullet">!</span> حد يومي: 60,000 جم.</li>
-                            <li><span class="bullet">!</span> حد شهري: 200,000 جم.</li>
-                            <li><span class="bullet">!</span> حد الرصيد: 100,000 جم.</li>
-                        </ul>
-                    
-                        <h4 class="service-subtitle">
-                            <span class="text-purple-500 ml-2">💵</span> الرسوم:
-                        </h4>
-                        <div class="overflow-x-auto mb-6">
-                            <table class="info-table">
-                                <thead>
-                                    <tr>
-                                        <th>الخدمة</th>
-                                        <th>الرسوم</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>تسجيل/تجديد/شراء</td><td>مجانًا</td></tr>
-                                    <tr><td>تحويل لمحفظة SCB</td><td>1 جنيه</td></tr>
-                                    <tr><td>تحويل لمحافظ أخرى</td><td>0.5% (بحد أقصى 15 جم)</td></tr>
-                                    <tr><td>سحب من ATM</td><td>1% (حد أدنى 3 جم)</td></tr>
-                                    <tr><td>إيداع من ATM خارجي</td><td>3 جنيهات</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <h4 class="service-subtitle mt-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-indigo-500 ml-2">
-                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm0 8.625a1.125 1.125 0 1 0 0 2.25 1.125 1.125 0 0 0 0-2.25ZM15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
-                                <path d="M14.024 15.752a.75.75 0 0 1-.222.53l-.004.004-.004.003a5.232 5.232 0 0 1-1.735.912 5.232 5.232 0 0 1-1.943 0 5.232 5.232 0 0 1-1.735-.912l-.004-.003-.004-.004a.75.75 0 0 1-.221-.531V15a.75.75 0 0 1 .469-.704A4.504 4.504 0 0 0 12 15.75a4.504 4.504 0 0 0 3.255-1.454.75.75 0 0 1 .469.704v.752Z" />
-                            </svg>
-                            كيفية استخدام نظام المحفظة (لإدارة العملاء)
-                        </h4>
-                        <p class="text-gray-700 mb-6 leading-relaxed">
-                            الخطوات التالية توضح كيفية إدارة محفظة العميل من خلال نظام البنك الداخلي، بما في ذلك إعادة تعيين كلمة السر، إرسال رابط تحميل التطبيق، أو إيقاف المحفظة:
-                        </p>
-
-                        <div class="space-y-8">
-                            <div class="p-4 border rounded-lg shadow-sm bg-white">
-                                <h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                                    <span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">1</span>
-                                    تسجيل الدخول والوصول لقائمة العملاء
-                                </h5>
-                                <p class="text-gray-600 mb-3">بعد تسجيل الدخول على النظام، قم بالضغط على كلمة "Customer" في القائمة للوصول إلى شاشة إدارة العملاء.</p>
-                                <div class="bg-gray-50 p-3 rounded-md text-center border">
-                                    <img src="https://github.com/mostafakas/kastello-scbank/blob/main/1.png?raw=true" alt="صورة توضيحية: الضغط على قائمة Customer" class="max-w-full h-auto mx-auto rounded shadow" style="max-height: 280px; display: block; margin-bottom: 8px; border: 1px solid #eee; background-color: #f9f9f9;">
-                                    <p class="text-xs text-gray-500 mt-1"><em>(مكان الصورة 1: شاشة تسجيل الدخول وقائمة Customer)</em></p>
-                                </div>
-                            </div>
-
-                            <div class="p-4 border rounded-lg shadow-sm bg-white">
-                                <h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                                    <span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">2</span>
-                                    البحث عن محفظة العميل
-                                </h5>
-                                <p class="text-gray-600 mb-3">في صفحة العملاء، استخدم خانة "Mobile Number" لإدخال رقم هاتف المحفظة البنكية للعميل، أو يمكنك استخدام الرقم القومي للبحث.</p>
-                                <div class="bg-gray-50 p-3 rounded-md text-center border">
-                                    <img src="https://github.com/mostafakas/kastello-scbank/blob/main/2.png?raw=true" alt="صورة توضيحية: البحث برقم الهاتف أو الرقم القومي" class="max-w-full h-auto mx-auto rounded shadow" style="max-height: 280px; display: block; margin-bottom: 8px; border: 1px solid #eee; background-color: #f9f9f9;">
-                                    <p class="text-xs text-gray-500 mt-1"><em>(مكان الصورة 2: شاشة البحث عن العميل)</em></p>
-                                </div>
-                            </div>
-                            
-                            <div class="p-4 border rounded-lg shadow-sm bg-white">
-                                <h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                                    <span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">3</span>
-                                    عرض تفاصيل المحفظة
-                                </h5>
-                                <p class="text-gray-600 mb-3">بعد ظهور نتائج البحث، اضغط على اسم العميل أو رقم المحفظة للدخول إلى صفحة تفاصيل المحفظة، حيث ستجد جميع بياناتها.</p>
-                                <div class="bg-gray-50 p-3 rounded-md text-center border">
-                                    <img src="https://github.com/mostafakas/kastello-scbank/blob/main/3.png?raw=true" alt="صورة توضيحية: تفاصيل المحفظة" class="max-w-full h-auto mx-auto rounded shadow" style="max-height: 280px; display: block; margin-bottom: 8px; border: 1px solid #eee; background-color: #f9f9f9;">
-                                    <p class="text-xs text-gray-500 mt-1"><em>(مكان الصورة 3: شاشة تفاصيل المحفظة وبداية ظهور الأزرار)</em></p>
-                                </div>
-                            </div>
-
-                            <div class="p-4 border rounded-lg shadow-sm bg-white">
-                                <h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                                    <span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">4</span>
-                                    الإجراءات المتاحة على المحفظة
-                                </h5>
-                                <p class="text-gray-600 mb-4">في صفحة تفاصيل المحفظة، ستجد على يمين الشاشة (أو في مكان بارز حسب تصميم النظام) ثلاثة أزرار رئيسية للإجراءات التالية. كل زر موضح أدناه مع وظيفته وأيقونة توضيحية:</p>
-                                
-                                <div class="space-y-6">
-                                    <div class="p-3 border rounded-md bg-gray-50">
-                                        <h6 class="text-md font-semibold text-red-700 mb-2">1. إيقاف المحفظة (Block Customer)</h6>
-                                        <div class="md:flex md:space-x-4 md:space-x-reverse items-center">
-                                            <div class="md:w-2/3">
-                                                <p class="text-gray-600 text-sm mb-2">يستخدم هذا الزر لإيقاف استخدام المحفظة للعميل، سواء بشكل مؤقت أو دائم، بناءً على السياسات المتبعة.</p>
-                                            </div>
-                                            <div class="md:w-1/3 mt-2 md:mt-0 flex items-center justify-center p-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-red-500">
-                                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-3 border rounded-md bg-gray-50">
-                                        <h6 class="text-md font-semibold text-blue-700 mb-2">2. إرسال رابط تحميل التطبيق (Send URL)</h6>
-                                        <div class="md:flex md:space-x-4 md:space-x-reverse items-center">
-                                            <div class="md:w-2/3">
-                                                <p class="text-gray-600 text-sm mb-2">يستخدم هذا الزر لإرسال رسالة نصية (SMS) إلى رقم هاتف العميل المسجل بالمحفظة. تحتوي هذه الرسالة على رابط مباشر لتحميل أحدث إصدار من تطبيق المحفظة الإلكترونية الخاص بالبنك.</p>
-                                            </div>
-                                            <div class="md:w-1/3 mt-2 md:mt-0 flex items-center justify-center p-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-blue-600">
-                                                  <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 0-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.389 4.282a.75.75 0 0 0 0 1.06l1.757 1.757a3.75 3.75 0 1 1-5.304 5.304l-4.5-4.5a3.75 3.75 0 0 1 0-5.304l4.5-4.5a3.75 3.75 0 0 1 5.304 0l1.757 1.757a.75.75 0 0 0 1.06-1.06l-1.757-1.757a5.25 5.25 0 1 0-7.424 7.424l4.5 4.5a5.25 5.25 0 0 0 7.424-7.424l-1.757-1.757a.75.75 0 0 0-1.06 0Z" clip-rule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-3 border rounded-md bg-gray-50">
-                                        <h6 class="text-md font-semibold text-amber-700 mb-2">3. إعادة تعيين كلمة المرور (Reset MPin)</h6>
-                                        <div class="md:flex md:space-x-4 md:space-x-reverse items-center">
-                                             <div class="md:w-2/3">
-                                                <p class="text-gray-600 text-sm mb-2">يستخدم هذا الزر لحذف كلمة المرور (MPIN) الحالية الخاصة بمحفظة العميل. بعد تنفيذ هذا الإجراء، سيحتاج العميل إلى استخدام خيار "نسيت كلمة المرور" أو "Forgot MPIN" من داخل تطبيق المحفظة على هاتفه لمتابعة خطوات إنشاء كلمة مرور جديدة وآمنة.</p>
-                                            </div>
-                                            <div class="md:w-1/3 mt-2 md:mt-0 flex items-center justify-center p-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-amber-600">
-                                                  <path fill-rule="evenodd" d="M15.75 1.5a6.75 6.75 0 0 0-6.651 7.906c.067.39-.032.787-.26.999l-.738.692a8.25 8.25 0 0 0-3.262 5.169 8.25 8.25 0 0 0 11.328 6.328.75.75 0 0 0 .303-.535l.802-3.111a.75.75 0 0 0-.224-.698l-1.632-1.632a.75.75 0 0 0-.53-.22H13.5a.75.75 0 0 0-.75.75v.75a.75.75 0 0 1-.75.75h-.75a.75.75 0 0 1-.75-.75V18a.75.75 0 0 0-.75-.75h-.75a.75.75 0 0 0-.75.75v.75c0 .414.336.75.75.75H9a2.25 2.25 0 0 0 2.25-2.25v-.75a2.25 2.25 0 0 0-2.25-2.25h-.75A2.25 2.25 0 0 0 6 15.75v1.59c0 .827-.171 1.624-.494 2.342a.75.75 0 0 0 .277 1.006 8.25 8.25 0 0 0 14.424-2.883c.167-1.038-.124-2.13-.683-3.06l-.738-.692c-.228-.212-.327-.61-.26-.999A6.75 6.75 0 0 0 15.75 1.5Zm0 3a.75.75 0 0 0 0 1.5A2.25 2.25 0 0 1 18 8.25a.75.75 0 0 0 1.5 0A3.75 3.75 0 0 0 15.75 4.5Z" clip-rule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-500 mt-6 text-center"><em>يرجى التأكد من اتباع الإجراءات الداخلية المعتمدة عند استخدام هذه الخصائص.</em></p>
-                            </div>
-                        </div>
-                        <div class="text-center mt-8 py-6 bg-cyan-50 rounded-lg">
-                            <p class="text-lg font-semibold text-cyan-800 mb-2">📲 حمّل التطبيق وابدأ تجربتك مع SCB E-Wallet الآن!</p>
-                            <a href="https://scbank.com.eg" target="_blank" rel="noopener noreferrer" class="inline-block bg-cyan-700 text-white font-semibold py-2 px-6 rounded-md hover:bg-cyan-800 transition duration-150">
-                                زيارة الموقع الرسمي SCB
-                            </a>
-                        </div>
+                        <h4 class="service-subtitle"><span class="text-green-500 ml-2">✅</span> المميزات:</h4>
+                        <ul class="service-list"><li><span class="bullet">✓</span> تحويل الأموال لأي محفظة في مصر.</li><li><span class="bullet">✓</span> دفع الفواتير والمخالفات والتبرعات.</li><li><span class="bullet">✓</span> الشراء باستخدام QR Code.</li><li><span class="bullet">✓</span> سحب/إيداع من ماكينات ATM أو فوري.</li></ul>
+                        <h4 class="service-subtitle"><span class="text-yellow-500 ml-2">📝</span> الاشتراك:</h4>
+                        <div class="mb-4"><h5 class="text-lg font-semibold text-gray-800 mb-2">الشروط:</h5><ul class="service-list"><li><span class="bullet">▪</span> مصري الجنسية.</li><li><span class="bullet">▪</span> بطاقة رقم قومي سارية.</li><li><span class="bullet">▪</span> رقم هاتف مسجل باسمك.</li></ul></div>
+                        <div class="mb-6"><h5 class="text-lg font-semibold text-gray-800 mb-2">الخطوات:</h5><ol class="space-y-2 text-gray-700 list-decimal list-outside pr-5"><li>قدّم على الخدمة من الفرع أو الموقع.</li><li>حمّل التطبيق.</li><li>فعّل المحفظة بكود التفعيل.</li><li>أنشئ رقم سري وابدأ الاستخدام.</li></ol></div>
+                        <h4 class="service-subtitle"><span class="text-blue-500 ml-2">💰</span> شحن المحفظة:</h4>
+                        <ul class="service-list"><li><span class="bullet">▸</span> من الحساب البنكي.</li><li><span class="bullet">▸</span> من ماكينات ATM (ميزة).</li><li><span class="bullet">▸</span> من خلال فروع فوري (باستخدام OTP).</li></ul>
+                        <h4 class="service-subtitle"><span class="text-red-500 ml-2">🔒</span> الحدود:</h4>
+                        <ul class="service-list"><li><span class="bullet">!</span> حد يومي: 60,000 جم.</li><li><span class="bullet">!</span> حد شهري: 200,000 جم.</li><li><span class="bullet">!</span> حد الرصيد: 100,000 جم.</li></ul>
+                        <h4 class="service-subtitle"><span class="text-purple-500 ml-2">💵</span> الرسوم:</h4>
+                        <div class="overflow-x-auto mb-6"><table class="info-table"><thead><tr><th>الخدمة</th><th>الرسوم</th></tr></thead><tbody><tr><td>تسجيل/تجديد/شراء</td><td>مجانًا</td></tr><tr><td>تحويل لمحفظة SCB</td><td>1 جنيه</td></tr><tr><td>تحويل لمحافظ أخرى</td><td>0.5% (بحد أقصى 15 جم)</td></tr><tr><td>سحب من ATM</td><td>1% (حد أدنى 3 جم)</td></tr><tr><td>إيداع من ATM خارجي</td><td>3 جنيهات</td></tr></tbody></table></div>
+                        <h4 class="service-subtitle mt-8"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-indigo-500 ml-2"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm0 8.625a1.125 1.125 0 1 0 0 2.25 1.125 1.125 0 0 0 0-2.25ZM15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" /><path d="M14.024 15.752a.75.75 0 0 1-.222.53l-.004.004-.004.003a5.232 5.232 0 0 1-1.735.912 5.232 5.232 0 0 1-1.943 0 5.232 5.232 0 0 1-1.735-.912l-.004-.003-.004-.004a.75.75 0 0 1-.221-.531V15a.75.75 0 0 1 .469-.704A4.504 4.504 0 0 0 12 15.75a4.504 4.504 0 0 0 3.255-1.454.75.75 0 0 1 .469.704v.752Z" /></svg>كيفية استخدام نظام المحفظة (لإدارة العملاء)</h4>
+                        <p class="text-gray-700 mb-6 leading-relaxed">الخطوات التالية توضح كيفية إدارة محفظة العميل من خلال نظام البنك الداخلي، بما في ذلك إعادة تعيين كلمة السر، إرسال رابط تحميل التطبيق، أو إيقاف المحفظة:</p>
+                        <div class="space-y-8"><div class="p-4 border rounded-lg shadow-sm bg-white"><h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center"><span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">1</span>تسجيل الدخول والوصول لقائمة العملاء</h5><p class="text-gray-600 mb-3">بعد تسجيل الدخول على النظام، قم بالضغط على كلمة "Customer" في القائمة للوصول إلى شاشة إدارة العملاء.</p><div class="bg-gray-50 p-3 rounded-md text-center border"><img src="https://github.com/mostafakas/kastello-scbank/blob/main/1.png?raw=true" alt="صورة توضيحية: الضغط على قائمة Customer" class="max-w-full h-auto mx-auto rounded shadow" style="max-height: 280px; display: block; margin-bottom: 8px; border: 1px solid #eee; background-color: #f9f9f9;"><p class="text-xs text-gray-500 mt-1"><em>(مكان الصورة 1: شاشة تسجيل الدخول وقائمة Customer)</em></p></div></div><div class="p-4 border rounded-lg shadow-sm bg-white"><h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center"><span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">2</span>البحث عن محفظة العميل</h5><p class="text-gray-600 mb-3">في صفحة العملاء، استخدم خانة "Mobile Number" لإدخال رقم هاتف المحفظة البنكية للعميل، أو يمكنك استخدام الرقم القومي للبحث.</p><div class="bg-gray-50 p-3 rounded-md text-center border"><img src="https://github.com/mostafakas/kastello-scbank/blob/main/2.png?raw=true" alt="صورة توضيحية: البحث برقم الهاتف أو الرقم القومي" class="max-w-full h-auto mx-auto rounded shadow" style="max-height: 280px; display: block; margin-bottom: 8px; border: 1px solid #eee; background-color: #f9f9f9;"><p class="text-xs text-gray-500 mt-1"><em>(مكان الصورة 2: شاشة البحث عن العميل)</em></p></div></div><div class="p-4 border rounded-lg shadow-sm bg-white"><h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center"><span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">3</span>عرض تفاصيل المحفظة</h5><p class="text-gray-600 mb-3">بعد ظهور نتائج البحث، اضغط على اسم العميل أو رقم المحفظة للدخول إلى صفحة تفاصيل المحفظة، حيث ستجد جميع بياناتها.</p><div class="bg-gray-50 p-3 rounded-md text-center border"><img src="https://github.com/mostafakas/kastello-scbank/blob/main/3.png?raw=true" alt="صورة توضيحية: تفاصيل المحفظة" class="max-w-full h-auto mx-auto rounded shadow" style="max-height: 280px; display: block; margin-bottom: 8px; border: 1px solid #eee; background-color: #f9f9f9;"><p class="text-xs text-gray-500 mt-1"><em>(مكان الصورة 3: شاشة تفاصيل المحفظة وبداية ظهور الأزرار)</em></p></div></div><div class="p-4 border rounded-lg shadow-sm bg-white"><h5 class="text-lg font-semibold text-gray-800 mb-2 flex items-center"><span class="bg-cyan-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 ml-2">4</span>الإجراءات المتاحة على المحفظة</h5><p class="text-gray-600 mb-4">في صفحة تفاصيل المحفظة، ستجد على يمين الشاشة (أو في مكان بارز حسب تصميم النظام) ثلاثة أزرار رئيسية للإجراءات التالية. كل زر موضح أدناه مع وظيفته وأيقونة توضيحية:</p><div class="space-y-6"><div class="p-3 border rounded-md bg-gray-50"><h6 class="text-md font-semibold text-red-700 mb-2">1. إيقاف المحفظة (Block Customer)</h6><div class="md:flex md:space-x-4 md:space-x-reverse items-center"><div class="md:w-2/3"><p class="text-gray-600 text-sm mb-2">يستخدم هذا الزر لإيقاف استخدام المحفظة للعميل، سواء بشكل مؤقت أو دائم، بناءً على السياسات المتبعة.</p></div><div class="md:w-1/3 mt-2 md:mt-0 flex items-center justify-center p-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-red-500"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" /></svg></div></div></div><div class="p-3 border rounded-md bg-gray-50"><h6 class="text-md font-semibold text-blue-700 mb-2">2. إرسال رابط تحميل التطبيق (Send URL)</h6><div class="md:flex md:space-x-4 md:space-x-reverse items-center"><div class="md:w-2/3"><p class="text-gray-600 text-sm mb-2">يستخدم هذا الزر لإرسال رسالة نصية (SMS) إلى رقم هاتف العميل المسجل بالمحفظة. تحتوي هذه الرسالة على رابط مباشر لتحميل أحدث إصدار من تطبيق المحفظة الإلكترونية الخاص بالبنك.</p></div><div class="md:w-1/3 mt-2 md:mt-0 flex items-center justify-center p-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-blue-600"><path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 0-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.389 4.282a.75.75 0 0 0 0 1.06l1.757 1.757a3.75 3.75 0 1 1-5.304 5.304l-4.5-4.5a3.75 3.75 0 0 1 0-5.304l4.5-4.5a3.75 3.75 0 0 1 5.304 0l1.757 1.757a.75.75 0 0 0 1.06-1.06l-1.757-1.757a5.25 5.25 0 1 0-7.424 7.424l4.5 4.5a5.25 5.25 0 0 0 7.424-7.424l-1.757-1.757a.75.75 0 0 0-1.06 0Z" clip-rule="evenodd" /></svg></div></div></div><div class="p-3 border rounded-md bg-gray-50"><h6 class="text-md font-semibold text-amber-700 mb-2">3. إعادة تعيين كلمة المرور (Reset MPin)</h6><div class="md:flex md:space-x-4 md:space-x-reverse items-center"><div class="md:w-2/3"><p class="text-gray-600 text-sm mb-2">يستخدم هذا الزر لحذف كلمة المرور (MPIN) الحالية الخاصة بمحفظة العميل. بعد تنفيذ هذا الإجراء، سيحتاج العميل إلى استخدام خيار "نسيت كلمة المرور" أو "Forgot MPIN" من داخل تطبيق المحفظة على هاتفه لمتابعة خطوات إنشاء كلمة مرور جديدة وآمنة.</p></div><div class="md:w-1/3 mt-2 md:mt-0 flex items-center justify-center p-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 text-amber-600"><path fill-rule="evenodd" d="M15.75 1.5a6.75 6.75 0 0 0-6.651 7.906c.067.39-.032.787-.26.999l-.738.692a8.25 8.25 0 0 0-3.262 5.169 8.25 8.25 0 0 0 11.328 6.328.75.75 0 0 0 .303-.535l.802-3.111a.75.75 0 0 0-.224-.698l-1.632-1.632a.75.75 0 0 0-.53-.22H13.5a.75.75 0 0 0-.75.75v.75a.75.75 0 0 1-.75.75h-.75a.75.75 0 0 1-.75-.75V18a.75.75 0 0 0-.75-.75h-.75a.75.75 0 0 0-.75.75v.75c0 .414.336.75.75.75H9a2.25 2.25 0 0 0 2.25-2.25v-.75a2.25 2.25 0 0 0-2.25-2.25h-.75A2.25 2.25 0 0 0 6 15.75v1.59c0 .827-.171 1.624-.494 2.342a.75.75 0 0 0 .277 1.006 8.25 8.25 0 0 0 14.424-2.883c.167-1.038-.124-2.13-.683-3.06l-.738-.692c-.228-.212-.327-.61-.26-.999A6.75 6.75 0 0 0 15.75 1.5Zm0 3a.75.75 0 0 0 0 1.5A2.25 2.25 0 0 1 18 8.25a.75.75 0 0 0 1.5 0A3.75 3.75 0 0 0 15.75 4.5Z" clip-rule="evenodd" /></svg></div></div></div></div><p class="text-sm text-gray-500 mt-6 text-center"><em>يرجى التأكد من اتباع الإجراءات الداخلية المعتمدة عند استخدام هذه الخصائص.</em></p></div></div>
+                        <div class="text-center mt-8 py-6 bg-cyan-50 rounded-lg"><p class="text-lg font-semibold text-cyan-800 mb-2">📲 حمّل التطبيق وابدأ تجربتك مع SCB E-Wallet الآن!</p><a href="https://scbank.com.eg" target="_blank" rel="noopener noreferrer" class="inline-block bg-cyan-700 text-white font-semibold py-2 px-6 rounded-md hover:bg-cyan-800 transition duration-150">زيارة الموقع الرسمي SCB</a></div>
                     </div>
-                    <div id="e-wallet-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden">
+                    <div id="e-wallet-back-button-container" class="md:col-span-2 mt-8 text-center service-block-animate page-hidden">
                         <button class="back-to-choice-section-button">اختر منتج/خدمة أخرى</button>
                     </div>
 
-                    <div id="internet-banking-section-wrapper" class="bg-white p-6 rounded-lg shadow-lg page-hidden md:col-span-2 text-right">
-                        <h3 class="service-section-title">
-                           <span class="text-sky-500 ml-3 text-3xl">💻</span> خدمة الإنترنت والموبايل البنكي للأفراد – بنك قناة السويس
-                        </h3>
-                        <p class="text-gray-700 mb-6 leading-relaxed">
-                            تُعد هذه الخدمة من القنوات الرقمية التي يقدمها بنك قناة السويس، مما يتيح للعملاء إدارة حساباتهم وإجراء معاملاتهم المالية على مدار الساعة، بأمان وسهولة، من خلال الإنترنت أو تطبيق الهاتف المحمول.
-                        </p>
-
-                        <h4 class="service-subtitle">
-                            <span class="text-green-500 ml-2">✅</span> المميزات الرئيسية:
-                        </h4>
-                        <ul class="service-list">
-                            <li><span class="bullet">▪</span> <strong>إدارة الحسابات:</strong> الاطلاع على تفاصيل الحسابات، الشهادات، الودائع، القروض، وبطاقات الائتمان.</li>
-                            <li><span class="bullet">▪</span> <strong>التحويلات المالية:</strong>
-                                <ul>
-                                    <li>بين حسابات العميل داخل البنك.</li>
-                                    <li>إلى حسابات أخرى داخل بنك قناة السويس.</li>
-                                    <li>إلى حسابات في بنوك أخرى داخل مصر بالجنيه المصري.</li>
-                                </ul>
-                            </li>
-                            <li><span class="bullet">▪</span> <strong>الخدمات الإضافية:</strong>
-                                <ul>
-                                    <li>فتح حساب إضافي.</li>
-                                    <li>ربط الشهادات والودائع.</li>
-                                    <li>طلب دفتر شيكات والاستعلام عن حالته.</li>
-                                    <li>تفعيل تطبيق رموز الأمان (SCB Token).</li>
-                                    <li>تفعيل التنبيهات والإشعارات للمعاملات.</li>
-                                    <li>الاطلاع على أسعار الصرف.</li>
-                                    <li>البحث عن أماكن الفروع وماكينات الصراف الآلي التابعة للبنك.</li>
-                                    <li>إرسال استفسارات أو شكاوى أو اقتراحات لممثلي خدمة العملاء.</li>
-                                </ul>
-                            </li>
-                        </ul>
-
-                        <h4 class="service-subtitle">
-                            <span class="text-yellow-500 ml-2">📝</span> خطوات الاشتراك:
-                        </h4>
-                        <div class="mb-4">
-                            <h5 class="text-lg font-semibold text-gray-800 mb-2">1. التسجيل عبر الإنترنت:</h5>
-                            <ol class="space-y-2 text-gray-700 list-decimal list-outside pr-5">
-                                <li>زيارة أقرب فرع للبنك لتقديم طلب الاشتراك.</li>
-                                <li>الدخول إلى الموقع الإلكتروني للبنك.</li>
-                                <li>اختيار "تفعيل الخدمات الإلكترونية" ثم "تسجيل الآن".</li>
-                                <li>إدخال البيانات المطلوبة (رقم الحساب، الرقم القومي، تاريخ الميلاد، رمز التحقق) ثم الضغط على "تنفيذ".</li>
-                            </ol>
-                        </div>
-                        <div class="mb-6">
-                            <h5 class="text-lg font-semibold text-gray-800 mb-2">2. التفعيل عبر تطبيق الموبايل:</h5>
-                            <ol class="space-y-2 text-gray-700 list-decimal list-outside pr-5">
-                                <li>التواصل مع مركز الاتصال على الرقم 19093 لتفعيل الخدمة.</li>
-                                <li>استلام اسم المستخدم عبر البريد الإلكتروني ورمز التفعيل (OTP) عبر رسالة نصية.</li>
-                                <li>فتح التطبيق، اختيار "تفعيل الحساب"، إدخال اسم المستخدم ورمز التفعيل، ثم الضغط على "تحقق".</li>
-                                <li>إنشاء كلمة المرور الخاصة بك لاستخدامها في الدخول على الخدمة.</li>
-                            </ol>
-                        </div>
-
-                        <h4 class="service-subtitle">
-                            <span class="text-blue-500 ml-2">💰</span> حدود التحويلات اليومية:
-                        </h4>
-                        <div class="overflow-x-auto mb-6">
-                            <table class="info-table">
-                                <thead>
-                                    <tr>
-                                        <th>نوع التحويل</th>
-                                        <th>الحد الأقصى للمعاملة</th>
-                                        <th>الحد الأقصى اليومي</th>
-                                        <th>الحد الأقصى الأسبوعي</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>بين حسابات العميل</td>
-                                        <td>10 مليون ج.م</td>
-                                        <td>10 مليون ج.م</td>
-                                        <td>70 مليون ج.م</td>
-                                    </tr>
-                                    <tr>
-                                        <td>داخل بنك قناة السويس</td>
-                                        <td>1 مليون ج.م</td>
-                                        <td>1 مليون ج.م</td>
-                                        <td>3.5 مليون ج.م</td>
-                                    </tr>
-                                    <tr>
-                                        <td>إلى بنوك أخرى داخل مصر</td>
-                                        <td>1 مليون ج.م</td>
-                                        <td>1 مليون ج.م</td>
-                                        <td>3.5 مليون ج.م</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <h4 class="service-subtitle">
-                            <span class="text-purple-500 ml-2">ℹ️</span> معلومات إضافية:
-                        </h4>
-                        <ul class="service-list">
-                            <li><span class="bullet">•</span> <strong>الاشتراك:</strong> مجاني.</li>
-                            <li><span class="bullet">•</span> <strong>التطبيق:</strong> متاح على أنظمة تشغيل iOS (إصدار 17 وما بعده) وأندرويد.</li>
-                            <li><span class="bullet">•</span> <strong>اللغات المتاحة:</strong> العربية والإنجليزية.</li>
-                            <li><span class="bullet">•</span> <strong>في حالة فقدان كلمة السر:</strong> يرجى التواصل مع مركز الخدمة الهاتفية على الرقم 19093 أو +20219093 من خارج مصر.</li>
-                            <li><span class="bullet">•</span> <strong>الأمان:</strong>
-                                <ul>
-                                    <li>تسجيل الدخول باستخدام اسم المستخدم وكلمة المرور.</li>
-                                    <li>إمكانية استخدام القياسات الحيوية (بصمة الإصبع أو التعرف على الوجه) لتسجيل الدخول.</li>
-                                    <li>إشعارات فورية عند تسجيل الدخول.</li>
-                                    <li>سياسة خصوصية لحماية المعلومات المالية.</li>
-                                    <li>خاصية الغلق التلقائي للتطبيق في حالة عدم الاستخدام.</li>
-                                </ul>
-                            </li>
-                        </ul>
-
-                        <div class="text-center mt-8 py-6 bg-sky-50 rounded-lg">
-                            <p class="text-lg font-semibold text-sky-800 mb-2">📲 للمزيد من المعلومات والتسجيل في خدمة الإنترنت والموبايل البنكي:</p>
-                            <a href="https://scbank.com.eg/Ar/Personal/DigitalServices/SCBMobileandInternetBanking.aspx" target="_blank" rel="noopener noreferrer" class="inline-block bg-sky-700 text-white font-semibold py-2 px-6 rounded-md hover:bg-sky-800 transition duration-150">
-                                زيارة صفحة الخدمة على موقع البنك
-                            </a>
-                        </div>
+                    <div id="internet-banking-section-wrapper" class="bg-white p-6 rounded-lg shadow-lg service-block-animate page-hidden md:col-span-2 text-right">
+                        <h3 class="service-section-title"><span class="text-sky-500 ml-3 text-3xl">💻</span> خدمة الإنترنت والموبايل البنكي للأفراد – بنك قناة السويس</h3>
+                        <p class="text-gray-700 mb-6 leading-relaxed">تُعد هذه الخدمة من القنوات الرقمية التي يقدمها بنك قناة السويس، مما يتيح للعملاء إدارة حساباتهم وإجراء معاملاتهم المالية على مدار الساعة، بأمان وسهولة، من خلال الإنترنت أو تطبيق الهاتف المحمول.</p>
+                        <h4 class="service-subtitle"><span class="text-green-500 ml-2">✅</span> المميزات الرئيسية:</h4>
+                        <ul class="service-list"><li><span class="bullet">▪</span> <strong>إدارة الحسابات:</strong> الاطلاع على تفاصيل الحسابات، الشهادات، الودائع، القروض، وبطاقات الائتمان.</li><li><span class="bullet">▪</span> <strong>التحويلات المالية:</strong><ul><li>بين حسابات العميل داخل البنك.</li><li>إلى حسابات أخرى داخل بنك قناة السويس.</li><li>إلى حسابات في بنوك أخرى داخل مصر بالجنيه المصري.</li></ul></li><li><span class="bullet">▪</span> <strong>الخدمات الإضافية:</strong><ul><li>فتح حساب إضافي.</li><li>ربط الشهادات والودائع.</li><li>طلب دفتر شيكات والاستعلام عن حالته.</li><li>تفعيل تطبيق رموز الأمان (SCB Token).</li><li>تفعيل التنبيهات والإشعارات للمعاملات.</li><li>الاطلاع على أسعار الصرف.</li><li>البحث عن أماكن الفروع وماكينات الصراف الآلي التابعة للبنك.</li><li>إرسال استفسارات أو شكاوى أو اقتراحات لممثلي خدمة العملاء.</li></ul></li></ul>
+                        <h4 class="service-subtitle"><span class="text-yellow-500 ml-2">📝</span> خطوات الاشتراك:</h4>
+                        <div class="mb-4"><h5 class="text-lg font-semibold text-gray-800 mb-2">1. التسجيل عبر الإنترنت:</h5><ol class="space-y-2 text-gray-700 list-decimal list-outside pr-5"><li>زيارة أقرب فرع للبنك لتقديم طلب الاشتراك.</li><li>الدخول إلى الموقع الإلكتروني للبنك.</li><li>اختيار "تفعيل الخدمات الإلكترونية" ثم "تسجيل الآن".</li><li>إدخال البيانات المطلوبة (رقم الحساب، الرقم القومي، تاريخ الميلاد، رمز التحقق) ثم الضغط على "تنفيذ".</li></ol></div>
+                        <div class="mb-6"><h5 class="text-lg font-semibold text-gray-800 mb-2">2. التفعيل عبر تطبيق الموبايل:</h5><ol class="space-y-2 text-gray-700 list-decimal list-outside pr-5"><li>التواصل مع مركز الاتصال على الرقم 19093 لتفعيل الخدمة.</li><li>استلام اسم المستخدم عبر البريد الإلكتروني ورمز التفعيل (OTP) عبر رسالة نصية.</li><li>فتح التطبيق، اختيار "تفعيل الحساب"، إدخال اسم المستخدم ورمز التفعيل، ثم الضغط على "تحقق".</li><li>إنشاء كلمة المرور الخاصة بك لاستخدامها في الدخول على الخدمة.</li></ol></div>
+                        <h4 class="service-subtitle"><span class="text-blue-500 ml-2">💰</span> حدود التحويلات اليومية:</h4>
+                        <div class="overflow-x-auto mb-6"><table class="info-table"><thead><tr><th>نوع التحويل</th><th>الحد الأقصى للمعاملة</th><th>الحد الأقصى اليومي</th><th>الحد الأقصى الأسبوعي</th></tr></thead><tbody><tr><td>بين حسابات العميل</td><td>10 مليون ج.م</td><td>10 مليون ج.م</td><td>70 مليون ج.م</td></tr><tr><td>داخل بنك قناة السويس</td><td>1 مليون ج.م</td><td>1 مليون ج.م</td><td>3.5 مليون ج.م</td></tr><tr><td>إلى بنوك أخرى داخل مصر</td><td>1 مليون ج.م</td><td>1 مليون ج.م</td><td>3.5 مليون ج.م</td></tr></tbody></table></div>
+                        <h4 class="service-subtitle"><span class="text-purple-500 ml-2">ℹ️</span> معلومات إضافية:</h4>
+                        <ul class="service-list"><li><span class="bullet">•</span> <strong>الاشتراك:</strong> مجاني.</li><li><span class="bullet">•</span> <strong>التطبيق:</strong> متاح على أنظمة تشغيل iOS (إصدار 17 وما بعده) وأندرويد.</li><li><span class="bullet">•</span> <strong>اللغات المتاحة:</strong> العربية والإنجليزية.</li><li><span class="bullet">•</span> <strong>في حالة فقدان كلمة السر:</strong> يرجى التواصل مع مركز الخدمة الهاتفية على الرقم 19093 أو +20219093 من خارج مصر.</li><li><span class="bullet">•</span> <strong>الأمان:</strong><ul><li>تسجيل الدخول باستخدام اسم المستخدم وكلمة المرور.</li><li>إمكانية استخدام القياسات الحيوية (بصمة الإصبع أو التعرف على الوجه) لتسجيل الدخول.</li><li>إشعارات فورية عند تسجيل الدخول.</li><li>سياسة خصوصية لحماية المعلومات المالية.</li><li>خاصية الغلق التلقائي للتطبيق في حالة عدم الاستخدام.</li></ul></li></ul>
+                        <div class="text-center mt-8 py-6 bg-sky-50 rounded-lg"><p class="text-lg font-semibold text-sky-800 mb-2">📲 للمزيد من المعلومات والتسجيل في خدمة الإنترنت والموبايل البنكي:</p><a href="https://scbank.com.eg/Ar/Personal/DigitalServices/SCBMobileandInternetBanking.aspx" target="_blank" rel="noopener noreferrer" class="inline-block bg-sky-700 text-white font-semibold py-2 px-6 rounded-md hover:bg-sky-800 transition duration-150">زيارة صفحة الخدمة على موقع البنك</a></div>
                     </div>
-                    <div id="internet-banking-back-button-container" class="md:col-span-2 mt-8 text-center page-hidden">
+                    <div id="internet-banking-back-button-container" class="md:col-span-2 mt-8 text-center service-block-animate page-hidden">
                         <button class="back-to-choice-section-button">اختر منتج/خدمة أخرى</button>
                     </div>
 
                 </div>
             </div></section>
-            
+
             <section id="contact" class="page-section bg-cyan-800 text-white"><div class="container mx-auto px-4 py-16"><div class="text-center mb-10"><h2 class="text-3xl md:text-4xl font-bold">جاهز لتبدأ؟</h2><p class="mt-4 text-lg text-cyan-200 max-w-2xl mx-auto">تواصل معنا أو قم بزيارة أقرب فرع.</p></div><div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 text-center">
                 <div class="bg-cyan-700/50 p-6 rounded-lg"><h3 class="text-xl font-bold mb-2">تفضل بزيارتنا</h3><p class="text-cyan-200"><a href="https://scbank.com.eg/Ar/Locator.aspx" target="_blank" class="hover:underline">ابحث عن أقرب فرع</a>.</p></div>
                 <div class="bg-cyan-700/50 p-6 rounded-lg"><h3 class="text-xl font-bold mb-2">اتصل بنا</h3><p class="text-cyan-200">الخط الساخن: <span class="font-bold tracking-wider">19093</span></p></div>
                 <div class="bg-cyan-700/50 p-6 rounded-lg"><h3 class="text-xl font-bold mb-2">تابعنا أونلاين</h3><p class="text-cyan-200"><a href="https://scbank.com.eg/Ar/" target="_blank" class="hover:underline">موقعنا وتطبيقاتنا</a>.</p></div>
             </div></div></section>
         </main>
-        
+
         <footer class="bg-gray-900 text-white"><div class="container mx-auto px-4 py-6 text-center"><p>&copy; <span id="current-year"></span> بنك قناة السويس. كل الحقوق محفوظة.</p><p class="text-sm text-gray-400 mt-2">عرض توضيحي. البيانات أمثلة وقد تختلف.</p></div></footer>
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // --- Element Selectors ---
+    const splashScreen = document.getElementById('splash-screen');
+    const splashLogo = document.getElementById('splash-logo');
+    const enterAppButton = document.getElementById('enter-app-button');
+
     const loginModal = document.getElementById('login-modal');
+    const loginModalContent = document.getElementById('login-modal-content');
     const loginForm = document.getElementById('login-form');
     const loginError = document.getElementById('login-error');
     const usernameInput = document.getElementById('username');
@@ -545,15 +558,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const appContentWrapper = document.getElementById('app-content-wrapper');
     const welcomeUsernameSpan = document.getElementById('welcome-username');
     const headerLogoLink = document.getElementById('header-logo-link');
+
     const welcomeMessageModal = document.getElementById('welcome-message-modal');
+    const welcomeModalContent = document.getElementById('welcome-modal-content');
     const welcomeText = document.getElementById('welcome-text');
+    const welcomeSubtext = document.getElementById('welcome-subtext'); // New element for subtext
+
     const allPageSections = document.querySelectorAll('.page-section');
-    const productsSection = document.getElementById('products'); 
+    const productsSection = document.getElementById('products');
     const calculatorSectionTitle = document.getElementById('calculator-section-title');
     const calculatorSubtitle = document.getElementById('calculator-subtitle');
     const heroTitleEl = document.getElementById('hero-title');
     const heroSubtitleEl = document.getElementById('hero-subtitle');
-
 
     const certificateTotalEarningsWrapper = document.getElementById('certificate-total-earnings-wrapper');
     const certificatePeriodicPayoutWrapper = document.getElementById('certificate-periodic-payout-wrapper');
@@ -570,7 +586,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const payoutCalcFrequencyEl = document.getElementById('payout-calc-frequency');
     const periodicPayoutDescriptionEl = document.getElementById('periodic-payout-description');
     const periodicPayoutResultEl = document.getElementById('periodic-payout-result');
-    
+
     const revampedLoanCalculatorWrapper = document.getElementById('revamped-loan-calculator-wrapper');
     const loansBackButtonContainer = document.getElementById('loans-back-button-container');
     const loanSelectTypeEl = document.getElementById('loan-select-type');
@@ -595,20 +611,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const eWalletBackButtonContainer = document.getElementById('e-wallet-back-button-container');
 
     const internetBankingSectionWrapper = document.getElementById('internet-banking-section-wrapper');
-    const internetBankingBackButtonContainer = document.getElementById('internet-banking-back-button-container'); 
-
+    const internetBankingBackButtonContainer = document.getElementById('internet-banking-back-button-container');
 
     let currentCertificateAnnualRate = 0;
     let certificateTotalEarningsChart;
 
-    const certificateDefinitions = { 
+    const allServiceBlocks = [
+        certificateTotalEarningsWrapper, certificatePeriodicPayoutWrapper, certsBackButtonContainer,
+        revampedLoanCalculatorWrapper, loansBackButtonContainer,
+        termDepositCalculatorWrapper, depositsBackButtonContainer,
+        eWalletSectionWrapper, eWalletBackButtonContainer,
+        internetBankingSectionWrapper, internetBankingBackButtonContainer
+    ];
+
+    const certificateDefinitions = {
         triple_fixed: { name: "شهادة الادخار الثلاثية (عائد ثابت)", options: [{ text: "عائد ثابت 19.5%", annualRate: 19.5, currency: "EGP" }] },
         alhosad: { name: "شهادة الحصاد", options: [{ text: "عائد يومي 23.25% (سنوي مكافئ)", annualRate: 23.25, currency: "EGP" }, { text: "عائد سنوي 23.75%", annualRate: 23.75, currency: "EGP" }] },
         dollar_3yr: { name: "شهادة دولارية (3 سنوات)", options: [{ text: "عائد شهري 5.15% (سنوي مكافئ)", annualRate: 5.15, currency: "USD" }, { text: "عائد سنوي 5.30%", annualRate: 5.30, currency: "USD" }] },
         dollar_5yr: { name: "شهادة دولارية (5 سنوات)", options: [{ text: "عائد شهري 5.00% (سنوي مكافئ)", annualRate: 5.00, currency: "USD" }, { text: "عائد سنوي 5.15%", annualRate: 5.15, currency: "USD" }] }
     };
     const loanTypes = [ "التمويل الشخصي", "قرض بضمان الراتب", "قرض بضمان تحويل الراتب أو القسط", "قرض للأفراد بدون تحويل الراتب/ القسط", "قرض لموظفي البنوك", "قرض لضباط الجيش والمتقاعدين", "قرض لضباط الشرطة والمتقاعدين", "قرض لأصحاب الأنشطة والمهن الحرة", "قرض لأصحاب المعاشات", "القرض التعليمي", "تمويل عضوية نادي سماش الرياضي", "تمويل عضوية الأندية الرياضية", "قرض الأطباء", "قرض بضمان تملك عقار", "قرض بضمان بطاقة ائتمانية", "قرض بضمان السجل الائتماني(I-Score)", "قرض بضمان أوعية ادخارية", "قرض بضمان جزئي", "منتج التمويل العقاري", "التمويل العقاري لمحدودي الدخل", "التمويل العقاري لمتوسطي الدخل 3 %", "التمويل العقاري لمتوسطي الدخل 8 %", "مبادرة البنك المركزي لإحلال المركبات (Go Green)", "تمويل الطاقة النظيفة والمُتجددة", "قرض السيارة" ];
-    const depositInterestRates = { 
+    const depositInterestRates = {
         "EGP": [ { minAmount: 10000, maxAmount: Infinity, rates: { "1W": 7.75 } }, { minAmount: 2000, maxAmount: Infinity, rates: { "1M": 11.25, "2M": 0.00, "3M": 11.75, "6M": 12.25, "1Y": 12.75 } } ],
         "USD": [ { minAmount: 100, maxAmount: 49999, rates: { "1W": 2.99, "1M": 3.02178, "2M": 2.97178, "3M": 2.48037, "6M": 2.33353, "1Y": 1.56408 } }, { minAmount: 50000, maxAmount: 149999, rates: { "1W": 3.04, "1M": 3.07178, "2M": 3.02178, "3M": 2.53037, "6M": 2.38353, "1Y": 1.61408 } }, { minAmount: 150000, maxAmount: 299999, rates: { "1W": 3.09, "1M": 3.12178, "2M": 3.07178, "3M": 2.58037, "6M": 2.43353, "1Y": 1.66408 } }, { minAmount: 300000, maxAmount: 499999, rates: { "1W": 3.14, "1M": 3.17178, "2M": 3.12178, "3M": 2.63037, "6M": 2.48353, "1Y": 1.71408 } }, { minAmount: 500000, maxAmount: Infinity, rates: { "1W": 3.19, "1M": 3.22178, "2M": 3.17178, "3M": 2.68037, "6M": 2.53353, "1Y": 1.76408 } } ],
         "GBP": [ { minAmount: 100, maxAmount: Infinity, rates: { "1W": 0.001, "1M": 0.001, "2M": 0.001, "3M": 0.001, "6M": 0.001, "1Y": 0.001 } } ],
@@ -617,88 +640,183 @@ document.addEventListener('DOMContentLoaded', function () {
     const termDurationsInYears = { "1W": 1/52, "1M": 1/12, "2M": 2/12, "3M": 3/12, "6M": 6/12, "1Y": 1 };
     const currencySymbols = { EGP: "جنيه", USD: "دولار", GBP: "استرليني", EUR: "يورو" };
 
-    function resetAppContent() {
-        allPageSections.forEach(s => s.classList.add('page-hidden')); 
-        if (productsSection) productsSection.classList.add('page-hidden');
-        const allCalculatorsAndButtons = [
-            certificateTotalEarningsWrapper, certificatePeriodicPayoutWrapper, certsBackButtonContainer,
-            revampedLoanCalculatorWrapper, loansBackButtonContainer, 
-            termDepositCalculatorWrapper, depositsBackButtonContainer,
-            eWalletSectionWrapper, eWalletBackButtonContainer,
-            internetBankingSectionWrapper, internetBankingBackButtonContainer 
-        ];
-        allCalculatorsAndButtons.forEach(el => { if(el) el.classList.add('page-hidden'); });
+    // --- Screen/Modal Visibility Functions ---
+    function showScreen(screenElement, innerContentElement = null) {
+        if (screenElement) {
+            screenElement.style.display = screenElement.classList.contains('modal-screen') ? 'flex' : 'block';
+            setTimeout(() => {
+                screenElement.style.opacity = '1';
+                screenElement.style.visibility = 'visible';
+                if (innerContentElement) {
+                    innerContentElement.style.opacity = '1';
+                    innerContentElement.style.transform = 'scale(1)';
+                }
+            }, 50);
+        }
     }
 
-    function showProductChoiceScreen() { 
-        resetAppContent();
-        if(appContentWrapper) { appContentWrapper.style.opacity = '0'; appContentWrapper.classList.add('page-hidden'); }
+    function hideScreen(screenElement, innerContentElement = null, onHiddenCallback = null) {
+        if (screenElement) {
+            if (innerContentElement) {
+                innerContentElement.style.opacity = '0';
+                innerContentElement.style.transform = 'scale(0.95)';
+            }
+            screenElement.style.opacity = '0';
+            setTimeout(() => {
+                screenElement.style.visibility = 'hidden';
+                screenElement.style.display = 'none';
+                if (onHiddenCallback) onHiddenCallback();
+            }, innerContentElement ? 300 : 500); // Adjust timing based on inner content animation
+        }
+    }
+
+    // Initial Splash Screen Logic
+    if (splashScreen && splashLogo && enterAppButton) {
+        splashScreen.style.display = 'flex'; // Show splash initially
         setTimeout(() => {
-            if(appContentWrapper) appContentWrapper.style.display = 'none';
-            if(productChoiceScreen) { productChoiceScreen.style.display = 'flex'; setTimeout(() => { productChoiceScreen.style.opacity = '1'; productChoiceScreen.style.visibility = 'visible'; }, 50); }
+            splashScreen.style.opacity = '1';
+            splashScreen.style.visibility = 'visible';
+            splashLogo.style.opacity = '1';
+            splashLogo.style.transform = 'scale(1)';
+            enterAppButton.style.opacity = '1';
+        }, 100);
+
+        enterAppButton.addEventListener('click', () => {
+            hideScreen(splashScreen, null, () => {
+                showScreen(loginModal, loginModalContent);
+                if (usernameInput) usernameInput.focus();
+            });
+        });
+    } else { // Fallback if splash elements are not found, go to login
+        showScreen(loginModal, loginModalContent);
+        if (usernameInput) usernameInput.focus();
+    }
+
+
+    function resetAppContent() {
+        allPageSections.forEach(s => s.classList.add('page-hidden'));
+        if (productsSection) productsSection.classList.add('page-hidden');
+
+        allServiceBlocks.forEach(el => {
+            if (el) {
+                el.classList.remove('show');
+                el.classList.add('page-hidden');
+            }
+        });
+    }
+
+    function showProductChoiceScreenFlow() {
+        resetAppContent();
+        if (appContentWrapper) {
+            appContentWrapper.style.opacity = '0';
+        }
+        setTimeout(() => {
+            if (appContentWrapper) appContentWrapper.style.display = 'none';
+            showScreen(productChoiceScreen);
         }, 300);
     }
-    if(headerLogoLink) headerLogoLink.addEventListener('click', (e) => { e.preventDefault(); showProductChoiceScreen(); });
-    
-    loginForm.addEventListener('submit', function(event) { 
-        event.preventDefault(); 
-        const enteredUsername = usernameInput.value.trim(); 
-        const enteredPassword = passwordInput.value.trim(); 
-        if (enteredUsername === "مصطفي" && enteredPassword === "كاستلو") { // Sensitive data, use environment variables or a backend for real apps
-            loginModal.style.opacity = '0'; loginModal.style.visibility = 'hidden';
-            setTimeout(() => {
-                loginModal.style.display = 'none';
-                if(welcomeText) welcomeText.textContent = `أهلاً بك، ${enteredUsername}!`; 
-                if(welcomeUsernameSpan) welcomeUsernameSpan.textContent = enteredUsername;
-                if(welcomeMessageModal) { welcomeMessageModal.style.display = 'flex'; setTimeout(() => { welcomeMessageModal.style.opacity = '1'; welcomeMessageModal.style.visibility = 'visible'; }, 50); }
+
+
+    if(headerLogoLink) headerLogoLink.addEventListener('click', (e) => { e.preventDefault(); showProductChoiceScreenFlow(); });
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const enteredUsername = usernameInput.value.trim();
+        const enteredPassword = passwordInput.value.trim();
+
+        if (enteredUsername === "SCB" && enteredPassword === "Scb") {
+            hideScreen(loginModal, loginModalContent, () => {
+                if (welcomeText) welcomeText.textContent = `أهلاً بك، ${enteredUsername} في بنك قناة السويس!`;
+                if (welcomeSubtext) welcomeSubtext.textContent = `يومك يبدأ بإمكانيات لا حدود لها. نتمنى لك كل التوفيق والنجاح في تحقيق أهدافك.`;
+                if (welcomeUsernameSpan) welcomeUsernameSpan.textContent = enteredUsername;
+
+                showScreen(welcomeMessageModal, welcomeModalContent);
+
                 setTimeout(() => {
-                    if(welcomeMessageModal) { welcomeMessageModal.style.opacity = '0'; welcomeMessageModal.style.visibility = 'hidden'; setTimeout(() => { welcomeMessageModal.style.display = 'none'; showProductChoiceScreen(); }, 300); }
-                    else { showProductChoiceScreen(); }
-                }, 2000); 
-            }, 300); 
-        } else { 
-            loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.'; 
-            loginError.style.display = 'block'; 
-            if(passwordInput) passwordInput.value = ''; 
-            if(usernameInput) usernameInput.focus(); 
+                    hideScreen(welcomeMessageModal, welcomeModalContent, () => {
+                        showProductChoiceScreenFlow();
+                    });
+                }, 7000); // 3-second welcome message
+            });
+        } else {
+            loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
+            loginError.style.display = 'block';
+            if (passwordInput) passwordInput.value = '';
+            if (usernameInput) usernameInput.focus();
+            // Add a shake animation to the login modal content for error
+            if(loginModalContent) {
+                loginModalContent.classList.add('animate-shake'); // You'd need to define this animation
+                setTimeout(() => loginModalContent.classList.remove('animate-shake'), 500);
+            }
         }
     });
+     // Define shake animation if you want it (optional, add to <style>)
+    /*
+    @keyframes shake {
+      0%, 100% { transform: translateX(0) scale(1); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) scale(1); }
+      20%, 40%, 60%, 80% { transform: translateX(5px) scale(1); }
+    }
+    .animate-shake {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    */
 
-    document.querySelectorAll('#logout-button-choice, #logout-button-header, #logout-button-mobile').forEach(btn => { 
+
+    document.querySelectorAll('#logout-button-choice, #logout-button-header, #logout-button-mobile').forEach(btn => {
         btn.addEventListener('click', function() {
-            if(usernameInput) usernameInput.value = ''; 
-            if(passwordInput) passwordInput.value = ''; 
+            if(usernameInput) usernameInput.value = '';
+            if(passwordInput) passwordInput.value = '';
             if(loginError) loginError.style.display = 'none';
-            if(appContentWrapper) appContentWrapper.style.opacity = '0'; if(productChoiceScreen) { productChoiceScreen.style.opacity = '0'; productChoiceScreen.style.visibility = 'hidden';}
-            setTimeout(() => {
-                if(appContentWrapper) { appContentWrapper.style.display = 'none'; appContentWrapper.classList.add('page-hidden');}
-                if(productChoiceScreen) productChoiceScreen.style.display = 'none';
-                if(loginModal) { 
-                    loginModal.style.display = 'flex'; 
-                    setTimeout(() => { loginModal.style.opacity = '1'; loginModal.style.visibility = 'visible'; if(usernameInput) usernameInput.focus(); }, 50);
-                }
-            }, 300);
+
+            const activeScreen = productChoiceScreen.style.display !== 'none' ? productChoiceScreen : (appContentWrapper.style.display !== 'none' ? appContentWrapper : null);
+
+            if (activeScreen === appContentWrapper) {
+                 appContentWrapper.style.opacity = '0';
+                 setTimeout(() => {
+                    appContentWrapper.style.display = 'none';
+                    appContentWrapper.classList.add('page-hidden');
+                    showScreen(loginModal, loginModalContent);
+                     if(usernameInput) usernameInput.focus();
+                 }, 300);
+            } else if (activeScreen === productChoiceScreen) {
+                hideScreen(productChoiceScreen, null, () => {
+                    showScreen(loginModal, loginModalContent);
+                    if(usernameInput) usernameInput.focus();
+                });
+            } else { // Fallback if no specific screen is active
+                showScreen(loginModal, loginModalContent);
+                 if(usernameInput) usernameInput.focus();
+            }
         });
     });
 
-    document.querySelectorAll('.choice-button').forEach(button => { 
-        button.addEventListener('click', function() {
-            const choice = this.dataset.choice; if(productChoiceScreen) { productChoiceScreen.style.opacity = '0'; productChoiceScreen.style.visibility = 'hidden';}
-            setTimeout(() => {
-                if(productChoiceScreen) productChoiceScreen.style.display = 'none';
-                if(appContentWrapper) { appContentWrapper.style.display = 'block'; appContentWrapper.classList.remove('page-hidden'); setTimeout(() => { appContentWrapper.style.opacity = '1'; configureAppForService(choice); }, 50); }
-            }, 300);
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const choice = this.dataset.choice;
+            hideScreen(productChoiceScreen, null, () => {
+                if (appContentWrapper) {
+                    appContentWrapper.style.display = 'block';
+                    appContentWrapper.classList.remove('page-hidden');
+                    setTimeout(() => {
+                        appContentWrapper.style.opacity = '1';
+                        configureAppForService(choice);
+                    }, 50);
+                }
+            });
         });
     });
-    document.querySelectorAll('.back-to-choice-section-button').forEach(button => button.addEventListener('click', showProductChoiceScreen));
+    document.querySelectorAll('.back-to-choice-section-button').forEach(button => button.addEventListener('click', showProductChoiceScreenFlow));
 
     function configureAppForService(serviceType) {
-        resetAppContent(); 
+        resetAppContent();
+
         document.getElementById('hero')?.classList.remove('page-hidden');
-        document.getElementById('calculator')?.classList.remove('page-hidden'); 
+        document.getElementById('calculator')?.classList.remove('page-hidden');
         document.getElementById('contact')?.classList.remove('page-hidden');
-        
-        let currentCalcSectionTitle = "الحاسبة التفاعلية / تفاصيل الخدمة"; 
+
+        let currentCalcSectionTitle = "الحاسبة التفاعلية / تفاصيل الخدمة";
 
         if (heroTitleEl) heroTitleEl.textContent = "استثمر مستقبلك بثقة";
         if (heroSubtitleEl) heroSubtitleEl.textContent = "نظرة شاملة على أبرز منتجاتنا المصرفية وخدماتنا.";
@@ -707,51 +825,55 @@ document.addEventListener('DOMContentLoaded', function () {
             calculatorSubtitle.classList.remove('page-hidden');
         }
 
+        const showAndAnimate = (blocks) => {
+            blocks.forEach(el => {
+                if (el) {
+                    el.classList.remove('page-hidden');
+                    void el.offsetWidth;
+                    el.classList.add('show');
+                }
+            });
+        };
+
         if (serviceType === "certificates") {
             currentCalcSectionTitle = "حاسبات الشهادات";
-            if(certificateTotalEarningsWrapper) certificateTotalEarningsWrapper.classList.remove('page-hidden');
-            if(certificatePeriodicPayoutWrapper) certificatePeriodicPayoutWrapper.classList.remove('page-hidden');
-            if(certsBackButtonContainer) certsBackButtonContainer.classList.remove('page-hidden');
-            updateCertificateTypeChanged(); 
-            updateCertificateTotalEarnings(); 
+            showAndAnimate([certificateTotalEarningsWrapper, certificatePeriodicPayoutWrapper, certsBackButtonContainer]);
+            updateCertificateTypeChanged();
+            updateCertificateTotalEarnings();
         } else if (serviceType === "loans") {
             currentCalcSectionTitle = "حاسبة أقساط القروض";
-            if(revampedLoanCalculatorWrapper) revampedLoanCalculatorWrapper.classList.remove('page-hidden'); 
-            if(loansBackButtonContainer) loansBackButtonContainer.classList.remove('page-hidden');
-            populateLoanTypes(); updateRevampedLoanCalculator(); 
+            showAndAnimate([revampedLoanCalculatorWrapper, loansBackButtonContainer]);
+            populateLoanTypes(); updateRevampedLoanCalculator();
         } else if (serviceType === "deposits") {
             currentCalcSectionTitle = "حاسبة الودائع لأجل";
-            if(termDepositCalculatorWrapper) termDepositCalculatorWrapper.classList.remove('page-hidden');
-            if(depositsBackButtonContainer) depositsBackButtonContainer.classList.remove('page-hidden');
+            showAndAnimate([termDepositCalculatorWrapper, depositsBackButtonContainer]);
             updateNewDepositCalculator();
-        } else if (serviceType === "e-wallet") { 
+        } else if (serviceType === "e-wallet") {
             currentCalcSectionTitle = "المحفظة الإلكترونية SCB E-Wallet";
             if (heroTitleEl) heroTitleEl.textContent = "محفظتك الإلكترونية في متناول يدك";
             if (heroSubtitleEl) heroSubtitleEl.textContent = "ادفع فواتيرك، حوّل أموالك، وتسوق أونلاين بسهولة وأمان.";
-            if(eWalletSectionWrapper) eWalletSectionWrapper.classList.remove('page-hidden');
-            if(eWalletBackButtonContainer) eWalletBackButtonContainer.classList.remove('page-hidden');
+            showAndAnimate([eWalletSectionWrapper, eWalletBackButtonContainer]);
             if (calculatorSubtitle) calculatorSubtitle.textContent = "كل ما تحتاج معرفته عن محفظة بنك قناة السويس الإلكترونية.";
         } else if (serviceType === "internet-banking") {
             currentCalcSectionTitle = "خدمة الإنترنت والموبايل البنكي";
             if (heroTitleEl) heroTitleEl.textContent = "خدماتك البنكية بين يديك، أينما كنت";
             if (heroSubtitleEl) heroSubtitleEl.textContent = "إدارة حساباتك ومعاملاتك المالية بأمان وسهولة على مدار الساعة.";
-            if(internetBankingSectionWrapper) internetBankingSectionWrapper.classList.remove('page-hidden');
-            if(internetBankingBackButtonContainer) internetBankingBackButtonContainer.classList.remove('page-hidden');
+            showAndAnimate([internetBankingSectionWrapper, internetBankingBackButtonContainer]);
             if (calculatorSubtitle) calculatorSubtitle.textContent = "تفاصيل شاملة حول خدمة الإنترنت والموبايل البنكي من بنك قناة السويس.";
         }
-        
+
         if(calculatorSectionTitle) calculatorSectionTitle.textContent = currentCalcSectionTitle;
-        
-        const heroSectionEl = document.getElementById('hero'); 
-        if (heroSectionEl) { setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100); } 
-        
-        initializeAppFunctions(serviceType); 
+
+        const heroSectionEl = document.getElementById('hero');
+        if (heroSectionEl) { setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100); }
+
+        initializeAppFunctions(serviceType);
     }
-    
-    function updateCertificateTypeChanged() { 
+
+    function updateCertificateTypeChanged() {
         if (!certSelectTypeEl || !certRateOptionsWrapperEl || !certSelectRateOptionEl || !payoutCalcDisplayRateEl || !payoutCalcAmountLabelEl) return;
         const selectedCertKey = certSelectTypeEl.value; const certDef = certificateDefinitions[selectedCertKey];
-        certSelectRateOptionEl.innerHTML = ''; 
+        certSelectRateOptionEl.innerHTML = '';
         if (certDef.options.length > 1) {
             certRateOptionsWrapperEl.style.display = 'block';
             certDef.options.forEach((opt, index) => {
@@ -759,22 +881,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (index === 0) { optionEl.selected = true; currentCertificateAnnualRate = opt.annualRate; payoutCalcDisplayRateEl.textContent = opt.annualRate.toFixed(2); updateCertAmountLabelCurrency(opt.currency); }
                 certSelectRateOptionEl.appendChild(optionEl);
             });
-        } else { 
+        } else {
             certRateOptionsWrapperEl.style.display = 'none'; currentCertificateAnnualRate = certDef.options[0].annualRate; payoutCalcDisplayRateEl.textContent = certDef.options[0].annualRate.toFixed(2); updateCertAmountLabelCurrency(certDef.options[0].currency);
         }
         updatePeriodicCertPayout();
     }
-    function updateCertificateRateOptionChanged() { 
+    function updateCertificateRateOptionChanged() {
         if (!certSelectRateOptionEl || !payoutCalcDisplayRateEl || !payoutCalcAmountLabelEl) return;
         const selectedOption = certSelectRateOptionEl.options[certSelectRateOptionEl.selectedIndex];
         currentCertificateAnnualRate = parseFloat(selectedOption.value); payoutCalcDisplayRateEl.textContent = currentCertificateAnnualRate.toFixed(2);
         updateCertAmountLabelCurrency(selectedOption.dataset.currency); updatePeriodicCertPayout();
     }
-    function updateCertAmountLabelCurrency(currency) { 
+    function updateCertAmountLabelCurrency(currency) {
         if (payoutCalcAmountLabelEl) { payoutCalcAmountLabelEl.textContent = `مبلغ الشهادة (${currency === "USD" ? "بالدولار" : "بالجنيه المصري"})`; }
     }
-    function updatePeriodicCertPayout() { 
-        if (!payoutCalcAmountEl || !payoutCalcFrequencyEl || !periodicPayoutResultEl || !periodicPayoutDescriptionEl || (certificatePeriodicPayoutWrapper && certificatePeriodicPayoutWrapper.classList.contains('page-hidden'))) return;
+    function updatePeriodicCertPayout() {
+        if (!payoutCalcAmountEl || !payoutCalcFrequencyEl || !periodicPayoutResultEl || !periodicPayoutDescriptionEl || (certificatePeriodicPayoutWrapper && certificatePeriodicPayoutWrapper.classList.contains('page-hidden') && !certificatePeriodicPayoutWrapper.classList.contains('show'))) return;
         const amount = parseFloat(payoutCalcAmountEl.value) || 0; const calculationFrequency = payoutCalcFrequencyEl.value;
         const selectedCertKey = certSelectTypeEl.value; const certDef = certificateDefinitions[selectedCertKey];
         let currencySymbol = "جنيه";
@@ -786,14 +908,14 @@ document.addEventListener('DOMContentLoaded', function () {
         periodicPayoutDescriptionEl.textContent = descriptionText; periodicPayoutResultEl.textContent = `${payout.toFixed(2)} ${currencySymbol}`;
     }
 
-    function populateLoanTypes() { 
+    function populateLoanTypes() {
         if (!loanSelectTypeEl) return;
-        loanSelectTypeEl.innerHTML = ''; 
+        loanSelectTypeEl.innerHTML = '';
         loanTypes.forEach(type => { const option = document.createElement('option'); option.value = type; option.textContent = type; loanSelectTypeEl.appendChild(option); });
     }
-    function updateRevampedLoanCalculator() { 
-        if (!loanManualRateEl || !loanCustomAmountEl || !loanCustomTermYearsEl || !loanRepaymentFrequencyEl || !loanCustomInstallmentDescEl || !loanCustomInstallmentResultEl || (revampedLoanCalculatorWrapper && revampedLoanCalculatorWrapper.classList.contains('page-hidden'))) return;
-        const annualRate = parseFloat(loanManualRateEl.value) || 0; const P = parseFloat(loanCustomAmountEl.value) || 0; 
+    function updateRevampedLoanCalculator() {
+        if (!loanManualRateEl || !loanCustomAmountEl || !loanCustomTermYearsEl || !loanRepaymentFrequencyEl || !loanCustomInstallmentDescEl || !loanCustomInstallmentResultEl || (revampedLoanCalculatorWrapper && revampedLoanCalculatorWrapper.classList.contains('page-hidden') && !revampedLoanCalculatorWrapper.classList.contains('show'))) return;
+        const annualRate = parseFloat(loanManualRateEl.value) || 0; const P = parseFloat(loanCustomAmountEl.value) || 0;
         const termYears = parseInt(loanCustomTermYearsEl.value) || 0; const frequency = loanRepaymentFrequencyEl.value;
         let periodsPerYear = 12; let descText = "القسط الشهري المقدر:";
         if (frequency === "quarterly") { periodsPerYear = 4; descText = "القسط الربع سنوي المقدر:"; } else if (frequency === "semi-annually") { periodsPerYear = 2; descText = "القسط النصف سنوي المقدر:"; } else if (frequency === "annually") { periodsPerYear = 1; descText = "القسط السنوي المقدر:"; }
@@ -802,29 +924,29 @@ document.addEventListener('DOMContentLoaded', function () {
         loanCustomInstallmentDescEl.textContent = descText; loanCustomInstallmentResultEl.textContent = `${installment.toFixed(2)} جنيه`;
     }
 
-    function lookupDepositRate(currency, termKey, amount) { 
+    function lookupDepositRate(currency, termKey, amount) {
         const rateTiers = depositInterestRates[currency]; if (!rateTiers) return 0;
         let applicableRate = 0;
-        if (currency === "EGP") { 
+        if (currency === "EGP") {
             const specificHighTier = rateTiers.find(tier => tier.minAmount === 10000 && tier.rates[termKey] !== undefined);
-            if (specificHighTier && amount >= specificHighTier.minAmount) { return specificHighTier.rates[termKey]; } 
+            if (specificHighTier && amount >= specificHighTier.minAmount) { return specificHighTier.rates[termKey]; }
             const generalTier = rateTiers.find(tier => tier.minAmount === 2000 && tier.rates[termKey] !== undefined);
             if (generalTier && amount >= generalTier.minAmount) { return generalTier.rates[termKey]; }
-            return 0; 
-        } else { 
+            return 0;
+        } else {
             for (const tier of rateTiers) {
                 if (amount >= tier.minAmount && amount <= (tier.maxAmount || Infinity)) {
                     if (tier.rates && tier.rates[termKey] !== undefined) {
                         applicableRate = tier.rates[termKey];
-                        break; 
+                        break;
                     }
                 }
             }
         }
         return applicableRate;
     }
-    function updateNewDepositCalculator() { 
-        if (!depSelectCurrencyEl || !depSelectTermEl || !depCalcAmountEl || !depDisplayRateEl || !depInterestEarnedResultEl || !depCalcAmountLabelEl || (termDepositCalculatorWrapper && termDepositCalculatorWrapper.classList.contains('page-hidden'))) return;
+    function updateNewDepositCalculator() {
+        if (!depSelectCurrencyEl || !depSelectTermEl || !depCalcAmountEl || !depDisplayRateEl || !depInterestEarnedResultEl || !depCalcAmountLabelEl || (termDepositCalculatorWrapper && termDepositCalculatorWrapper.classList.contains('page-hidden') && !termDepositCalculatorWrapper.classList.contains('show'))) return;
         const currency = depSelectCurrencyEl.value; const termKey = depSelectTermEl.value; const amount = parseFloat(depCalcAmountEl.value) || 0;
         depCalcAmountLabelEl.textContent = `مبلغ الوديعة (${currencySymbols[currency] || currency})`;
         const annualRate = lookupDepositRate(currency, termKey, amount); depDisplayRateEl.textContent = annualRate.toFixed(3);
@@ -834,8 +956,8 @@ document.addEventListener('DOMContentLoaded', function () {
         depInterestEarnedResultEl.textContent = `${interestEarned.toFixed(2)} ${currencySymbols[currency] || currency}`;
     }
 
-    function updateCertificateTotalEarnings() { 
-        if(!certTotalAmountEl || !certTotalRateEl || !certTotalYearsEl || (certificateTotalEarningsWrapper && certificateTotalEarningsWrapper.classList.contains('page-hidden'))) return;
+    function updateCertificateTotalEarnings() {
+        if(!certTotalAmountEl || !certTotalRateEl || !certTotalYearsEl || (certificateTotalEarningsWrapper && certificateTotalEarningsWrapper.classList.contains('page-hidden') && !certificateTotalEarningsWrapper.classList.contains('show'))) return;
         const amount = parseFloat(certTotalAmountEl.value) || 0, rate = parseFloat(certTotalRateEl.value) || 0, years = parseInt(certTotalYearsEl.value) || 0;
         const labels = Array.from({ length: years + 1 }, (_, i) => `سنة ${i}`); let currentAmount = amount; const data = [currentAmount];
         for (let i = 0; i < years; i++) { currentAmount += currentAmount * (rate / 100); data.push(parseFloat(currentAmount.toFixed(2))); }
@@ -844,14 +966,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (certificateTotalEarningsChart) certificateTotalEarningsChart.destroy();
         certificateTotalEarningsChart = new Chart(ctx, { type: 'line', data: chartData, options: { responsive: true, maintainAspectRatio:false, plugins:{legend:{labels:{font:{family:'Cairo'}}}}, scales:{y:{ticks:{callback:v=>`${v} ج.م`,font:{family:'Cairo'}}},x:{ticks:{font:{family:'Cairo'}}}}}});
     }
-    
+
     function initializeAppFunctions(currentServiceType) {
         if(document.getElementById('current-year')) document.getElementById('current-year').textContent = new Date().getFullYear();
         const navLinks = document.querySelectorAll('header a.nav-link[href^="#"]');
         navLinks.forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const targetId = this.getAttribute('href'), targetElement = document.querySelector(targetId); if (targetElement) { const offsetPosition = targetElement.offsetTop - (document.querySelector('header')?.offsetHeight || 70); window.scrollTo({ top: offsetPosition, behavior: "smooth" }); } const mobileMenu = document.getElementById('mobile-menu'); if (mobileMenu && !mobileMenu.classList.contains('hidden')) mobileMenu.classList.add('hidden'); }); });
         const mobileMenu = document.getElementById('mobile-menu'), mobileMenuButton = document.getElementById('mobile-menu-button');
         if (mobileMenuButton && mobileMenu) mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-        
+
         if (currentServiceType === 'certificates') {
             if (certTotalAmountEl) { [certTotalAmountEl, certTotalRateEl, certTotalYearsEl].forEach(el => {el?.removeEventListener('input', updateCertificateTotalEarnings); el?.addEventListener('input', updateCertificateTotalEarnings);}); }
             if (certSelectTypeEl) { certSelectTypeEl.removeEventListener('change', updateCertificateTypeChanged); certSelectTypeEl.addEventListener('change', updateCertificateTypeChanged); }
@@ -864,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const revampedLoanInputs = [loanManualRateEl, loanCustomAmountEl, loanCustomTermYearsEl, loanRepaymentFrequencyEl, loanSelectTypeEl];
             revampedLoanInputs.forEach(el => { if(el) { el.removeEventListener('input', updateRevampedLoanCalculator); el.addEventListener('input', updateRevampedLoanCalculator); } });
         }
-        
+
         if (currentServiceType === 'deposits') {
             const termDepositInputs = [depSelectCurrencyEl, depSelectTermEl, depCalcAmountEl];
             termDepositInputs.forEach(el => { if(el) { el.removeEventListener('input', updateNewDepositCalculator); el.addEventListener('input', updateNewDepositCalculator); } });
@@ -872,7 +994,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if(document.getElementById('current-year')) document.getElementById('current-year').textContent = new Date().getFullYear();
-    if(usernameInput) usernameInput.focus();
+    // Initial focus is handled by splash screen logic now.
+    // if(usernameInput) usernameInput.focus(); // No longer needed here
 });
 </script>
 </body>
